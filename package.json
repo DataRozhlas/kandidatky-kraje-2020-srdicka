@@ -18,13 +18,18 @@
   },
   "homepage": "https://github.com/DataRozhlas/snodefall-builder#readme",
   "dependencies": {
-    "@babel/core": "^7.6.2",
-    "@babel/preset-env": "^7.6.2",
-    "@babel/preset-react": "^7.0.0",
-    "babel-loader": "^8.0.6",
-    "clean-css": "^4.2.1",
-    "js-yaml": "^3.13.1",
+    "@babel/core": "^7.11.4",
+    "@babel/preset-env": "^7.11.0",
+    "@babel/preset-react": "^7.10.4",
+    "babel-loader": "^8.1.0",
+    "clean-css": "^4.2.3",
+    "js-yaml": "^3.14.0",
     "marked": "^0.7.0",
-    "webpack": "^4.41.0"
+    "webpack": "^4.44.1"
+  },
+  "devDependencies": {
+    "highcharts": "^8.2.0",
+    "hyperscript-helpers": "^3.0.3",
+    "virtual-dom": "^2.1.1"
   }
 }
