@@ -1,0 +1,29 @@
+{
+  "@context": ["http://www.w3.org/ns/csvw",{"@language": "cs"}],
+  "url": "ciskr.csv",
+  "tableSchema": { 
+    "columns": [{
+      "name": "KRZAST",
+      "titles": "KRZAST",
+      "required": false,
+      "datatype": "number"
+    },{
+      "name": "NAZEVKRZ",
+      "titles": "NAZEVKRZ",
+      "required": true,
+      "datatype": "string"
+    },{
+      "name": "MANDATYKRZ",
+      "titles": "MANDATYKRZ",
+      "required": true,
+      "datatype": "number"
+    },{
+      "name": "KRAJ",
+      "titles": "KRAJ",
+      "required": true,
+      "datatype": "number"
+    }
+    ],
+    "primaryKey": "KRZAST"
+  }
+}
