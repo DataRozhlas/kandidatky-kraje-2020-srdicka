@@ -21,6 +21,7 @@
     "@babel/core": "^7.11.4",
     "@babel/preset-env": "^7.11.0",
     "@babel/preset-react": "^7.10.4",
+    "@babel/runtime": "^7.11.2",
     "babel-loader": "^8.1.0",
     "clean-css": "^4.2.3",
     "js-yaml": "^3.14.0",
@@ -28,6 +29,7 @@
     "webpack": "^4.44.1"
   },
   "devDependencies": {
+    "@babel/plugin-transform-runtime": "^7.11.5",
     "highcharts": "^8.2.0",
     "hyperscript-helpers": "^3.0.3",
     "virtual-dom": "^2.1.1"

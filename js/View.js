@@ -3,6 +3,7 @@ import { h } from 'virtual-dom';
 
 const { pre, div, h2, select, option } = hh(h);
 
+
 function formView (dispatch, model) {
   return div( {className: 'mw-100 center'}, [
     select( {className: '', name: 'vyberStrany'}, [

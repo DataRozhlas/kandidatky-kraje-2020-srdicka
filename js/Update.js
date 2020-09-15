@@ -5,9 +5,6 @@ function update (msg, model) {
     return model;
 }
 
-function loadData () {
-
-}
 
 function selectStrana () {
 
