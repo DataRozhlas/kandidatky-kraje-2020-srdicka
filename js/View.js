@@ -1,6 +1,6 @@
 import hh from 'hyperscript-helpers';
 import { h } from 'virtual-dom';
-import { searchTermInput } from './Update';
+import { searchTermInput, vyberStranu, vyberKraj } from './Update';
 
 const { pre, div, h2, select, option, form, label, input } = hh(h);
 
@@ -11,8 +11,8 @@ function generateOption(moznost) {
     else return option( {className: '', value: moznost.nk}, moznost.n)
 }
 
-function selectBox (moznosti, allText) {
-  return select( {className: 'w-3 pa1'}, [
+function selectBox (moznosti, allText, onchange) {
+  return select( {className: 'w-3 pa1', onchange}, [
     option( {className: '', value: 'all'}, allText),
     moznosti.map(moznost => generateOption(moznost)),
   ])
@@ -21,8 +21,8 @@ function selectBox (moznosti, allText) {
 function formView (dispatch, model) {
   const { searchTerm } = model;
   return div( {className: 'mw-100 center flex flex-wrap justify-between sans-serif'}, [
-    selectBox(model.kraje, "Všechny kraje"),
-    selectBox(model.strany, "Všechny strany"),
+    selectBox(model.kraje, "Všechny kraje", e => dispatch(vyberKraj(e.target.value))),
+    selectBox(model.strany, "Všechny strany", e => dispatch(vyberStranu(e.target.value))),
     form(
       {
         className: 'w-3 pa1'
@@ -43,7 +43,7 @@ function view (dispatch, model) {
     h2({ className: 'sans-serif f3 pv1 bb' }, 'Skutečné kandidátky'),
     formView(dispatch, model),
     h2({ className: 'sans-serif f3 pv1 bb' }, 'Vámi vybraná kandidátka'),
-    pre(JSON.stringify(model.searchTerm, null, 2)),
+    pre(JSON.stringify(model, null, 2)),
   ]);  
 }
 
