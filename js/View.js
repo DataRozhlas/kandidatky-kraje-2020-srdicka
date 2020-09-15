@@ -1,5 +1,6 @@
 import hh from 'hyperscript-helpers';
 import { h } from 'virtual-dom';
+import { searchTermInput } from './Update';
 
 const { pre, div, h2, select, option, form, label, input } = hh(h);
 
@@ -30,6 +31,7 @@ function formView (dispatch, model) {
         input({
           className: 'input-reset ba',
           type: 'text',
+          oninput: e => dispatch(searchTermInput(e.target.value)),
           value: searchTerm,
       })
       ])
@@ -40,6 +42,7 @@ function view (dispatch, model) {
   return div({ className: 'mw-100 center'}, [
     h2({ className: 'sans-serif f3 pv1 bb' }, 'Skutečné kandidátky'),
     formView(dispatch, model),
+    h2({ className: 'sans-serif f3 pv1 bb' }, 'Vámi vybraná kandidátka'),
     pre(JSON.stringify(model, null, 2)),
   ]);  
 }
