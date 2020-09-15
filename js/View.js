@@ -43,7 +43,7 @@ function view (dispatch, model) {
     h2({ className: 'sans-serif f3 pv1 bb' }, 'Skutečné kandidátky'),
     formView(dispatch, model),
     h2({ className: 'sans-serif f3 pv1 bb' }, 'Vámi vybraná kandidátka'),
-    pre(JSON.stringify(model, null, 2)),
+    pre(JSON.stringify(model.searchTerm, null, 2)),
   ]);  
 }
 
