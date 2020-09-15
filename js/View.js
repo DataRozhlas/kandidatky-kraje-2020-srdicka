@@ -1,21 +1,44 @@
 import hh from 'hyperscript-helpers';
 import { h } from 'virtual-dom';
 
-const { pre, div, h2, select, option } = hh(h);
+const { pre, div, h2, select, option, form, label, input } = hh(h);
 
+
+function generateOption(moznost) {
+    if (Object.keys(moznost).length==2)
+      return option( {className: '', value: moznost.KRZAST}, moznost.NAZEVKRZ)
+    else return option( {className: '', value: moznost.nk}, moznost.n)
+}
+
+function selectBox (moznosti, allText) {
+  return select( {className: 'w-3 pa1'}, [
+    option( {className: '', value: 'all'}, allText),
+    moznosti.map(moznost => generateOption(moznost)),
+  ])
+}
 
 function formView (dispatch, model) {
-  return div( {className: 'mw-100 center'}, [
-    select( {className: '', name: 'vyberStrany'}, [
-      option({className: '', value: 'ODS'}, 'ODS'),
-      option({className: '', value: 'Komouš'}, 'komouš')
-    ])
+  const { searchTerm } = model;
+  return div( {className: 'mw-100 center flex flex-wrap justify-between sans-serif'}, [
+    selectBox(model.kraje, "Všechny kraje"),
+    selectBox(model.strany, "Všechny strany"),
+    form(
+      {
+        className: 'w-3 pa1'
+      },[
+        label( {}, 'Hledej '),
+        input({
+          className: 'input-reset ba',
+          type: 'text',
+          value: searchTerm,
+      })
+      ])
   ]);
 }
 
 function view (dispatch, model) {
   return div({ className: 'mw-100 center'}, [
-    h2({ className: 'sans-serif f3 pv1' }, 'Skutečné kandidátky:'),
+    h2({ className: 'sans-serif f3 pv1 bb' }, 'Skutečné kandidátky'),
     formView(dispatch, model),
     pre(JSON.stringify(model, null, 2)),
   ]);  
@@ -23,9 +46,7 @@ function view (dispatch, model) {
 
 
 
-function selectBox () {
 
-}
 
 function searchBox () {
 
