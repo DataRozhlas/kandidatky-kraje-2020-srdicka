@@ -30,7 +30,7 @@ const {
 function makeNavButton(text, dispatch) {
   return a(
     {
-      className: `dib dim link black f6 b pa1 pointer sans-serif`,
+      className: `dib dim link black f4 b pa1 pointer sans-serif`,
       href: `#`,
       onclick: (e) => {
         e.preventDefault();
@@ -46,15 +46,15 @@ function makePagination(dispatch, model) {
     model.currPage > 0
       ? makeNavButton("← Předchozí", dispatch)
       : span(
-          { className: `dib f5 b pa1 sans-serif`, style: "visibility:hidden" },
+          { className: `dib f4 b pa1 sans-serif`, style: "visibility:hidden" },
           "← Předchozí"
         ),
     model.isMobile
       ? div(
-        { className: "dib pa1 sans-serif f6" },
+        { className: "dib pa1 sans-serif f7-m f6" },
         `${model.zobrazujiKandidatu} kandidátů`)
       : div(
-      { className: "dib pa1 sans-serif f6" },
+      { className: "dib pa1 sans-serif f7-m f6" },
       `${model.zobrazujiKandidatu} kandidátů | stránka ${
         model.currPage + 1
       } z ${Math.ceil(model.zobrazujiKandidatu / (model.isMobile ? 10 : 20))}`
@@ -62,7 +62,7 @@ function makePagination(dispatch, model) {
     model.currPage < Math.floor(model.zobrazujiKandidatu / (model.isMobile ? 10 : 20))
       ? makeNavButton("Další →", dispatch)
       : span(
-          { className: `dib f5 b pa1 sans-serif`, style: "visibility:hidden" },
+          { className: `dib f4 b pa1 sans-serif`, style: "visibility:hidden" },
           "Další →"
         ),
   ]);
@@ -71,7 +71,7 @@ function makePagination(dispatch, model) {
 function naporcujKandidaty(model) {
   let minKand = model.isMobile ? model.currPage * 10 : model.currPage * 20;
   let maxKand = model.isMobile ? minKand + 10 : minKand + 20;
-  return model.kandidati.slice(minKand, maxKand);
+  return model.kandidati.filter(k => k.s===1).slice(minKand, maxKand);
 }
 
 // tabulky
@@ -112,9 +112,9 @@ function kandidatiBody(dispatch, className, kandidati) {
 
 function tableView(dispatch, kandidati) {
   if (kandidati.length === 0) {
-    return div({ className: "mv2 i black-50" }, "Žádní vybraní kandidáti...");
+    return div({ className: "mv2 i black-50" }, "Vašemu zadání neodpovídá žádný kandidát.");
   }
-  return table({ className: "mv2 w-100 collapse f6", id: "tab1" }, [
+  return table({ className: "mv2 w-100 collapse f7", id: "tab1" }, [
     tableHeader,
     kandidatiBody(dispatch, "", kandidati),
   ]);
@@ -138,7 +138,7 @@ function selectBox(moznosti, allText, onchange) {
 function formView(dispatch, model) {
   const { searchTerm } = model;
   return div(
-    { className: "mw-100 center flex flex-wrap justify-between sans-serif" },
+    { className: "mw-100 center flex flex-wrap justify-between sans-serif f5-m f5-l f7" },
     [
       selectBox(model.kraje, "Všechny kraje", (e) =>
         dispatch(vyberKraj(e.target.value))
@@ -177,7 +177,7 @@ function view(dispatch, model) {
     makePagination(dispatch, model),
     h2({ className: "sans-serif f3 pv1 bb" }, "Vámi vybraná kandidátka"),
     pre(JSON.stringify(model.isMobile, null, 2)),
-    pre(JSON.stringify(model.currPage, null, 2)),
+    pre(JSON.stringify(model.searchTerm, null, 2)),
   ]);
 }
 

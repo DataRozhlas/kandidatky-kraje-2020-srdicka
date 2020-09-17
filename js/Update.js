@@ -34,11 +34,33 @@ export function zmenStranku(currPage) {
   };
 }
 
+function sumVisible(acc, kandidat) {
+  return acc + kandidat.s;
+}
+
 function update(msg, model) {
   switch (msg.type) {
     case MSGS.SEARCH_TERM: {
       const { searchTerm } = msg;
-      return { ...model, searchTerm };
+      const kandidati = model.kandidati.map((k) => {
+        const hledane = searchTerm.toUpperCase();
+        if (
+          k.p.toUpperCase().indexOf(hledane) > -1 ||
+          k.j.toUpperCase().indexOf(hledane) > -1 ||
+          k.po.toUpperCase().indexOf(hledane) > -1 ||
+          k.b.toUpperCase().indexOf(hledane) > -1
+        ) {
+          return { ...k, s: 1 };
+        } else return { ...k, s: 0 };
+      });
+      const zobrazujiKandidatu = kandidati.reduce(sumVisible, 0);
+      return {
+        ...model,
+        searchTerm,
+        kandidati,
+        zobrazujiKandidatu,
+        currPage: 0,
+      };
     }
     case MSGS.VYBRANY_KRAJ: {
       const { vybranyKraj } = msg;
