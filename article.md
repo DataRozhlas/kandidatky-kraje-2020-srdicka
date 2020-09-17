@@ -2,7 +2,7 @@ title: "Žádná se vám nelíbí? Sestavte si vlastní kandidátku pro krajské
 perex: ""
 coverimg:
 coverimg_note: ""
-styles: ["https://unpkg.com/tachyons/css/tachyons.min.css"]
+styles: []
 libraries: []
 options: [noheader, nopic]
 ---
