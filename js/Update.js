@@ -35,21 +35,13 @@ export function zmenStranku(currPage) {
 }
 
 function sumVisible(acc, kandidat) {
-  return acc + (kandidat.s + kandidat.f === 2 ? 1 : 0) ;
+  return acc + (kandidat.s + kandidat.f === 2 ? 1 : 0);
 }
 
 function update(msg, model) {
   switch (msg.type) {
     case MSGS.SEARCH_TERM: {
-      //   const lastSearchTerm = model.searchTerm;
       const { searchTerm } = msg;
-      //   const prohledavaniKandidati = model.kandidati;
-      // model.lastSearchTerm.length > model.searchTerm.length
-      //   ? model.kandidati
-      //   : model.kandidati.filter(k => k.s === 1);
-      //   console.log(model.lastSearchTerm.length > model.searchTerm.length);
-      //   console.log(prohledavaniKandidati);
-      //   console.log(model.kandidati);
       const kandidati = model.kandidati.map((k) => {
         const hledane = searchTerm.toUpperCase();
         if (
@@ -74,7 +66,7 @@ function update(msg, model) {
     case MSGS.VYBRANY_KRAJ: {
       const { vybranyKraj } = msg;
       const kandidati = model.kandidati.map((k) => {
-        if (k.z === vybranyKraj) return { ...k, f: 1, s: 1 };
+        if (k.z === vybranyKraj || vybranyKraj === 0) return { ...k, f: 1, s: 1 };
         else return { ...k, f: 0, s: 1 };
       });
       const zobrazujiKandidatu = kandidati.reduce(sumVisible, 0);
@@ -89,7 +81,19 @@ function update(msg, model) {
     }
     case MSGS.VYBRANA_STRANA: {
       const { vybranaStrana } = msg;
-      return { ...model, vybranaStrana };
+      const kandidati = model.kandidati.map((k) => {
+        if (k.k === vybranaStrana || vybranaStrana === 0) return { ...k, f: 1, s: 1 };
+        else return { ...k, f: 0, s: 1 };
+      });
+      const zobrazujiKandidatu = kandidati.reduce(sumVisible, 0);
+      return {
+        ...model,
+        kandidati,
+        vybranaStrana,
+        zobrazujiKandidatu,
+        currPage: 0,
+        searchTerm: "",
+      };
     }
     case MSGS.CURR_PAGE: {
       const { currPage } = msg;

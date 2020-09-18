@@ -2,7 +2,6 @@ const initModel = {
     vybranaStrana: 0,
     vybranyKraj: 0,
     searchTerm: "",
-    // lastSearchTerm: "",
     currPage: 0,
     isMobile: null,
     zobrazujiKandidatu: 9726,

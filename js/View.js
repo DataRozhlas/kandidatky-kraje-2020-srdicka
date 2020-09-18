@@ -131,30 +131,40 @@ function tableView(dispatch, kandidati) {
 
 // menu
 
-function generateOption(moznost) {
-  if (Object.keys(moznost).length == 2)
-    return option({ className: "", value: moznost.KRZAST }, moznost.NAZEVKRZ);
-  else return option({ className: "", value: moznost.nk }, moznost.n);
+function generateOption(moznost) {  
+  if (Object.keys(moznost).length == 2) 
+    return option({ className: "", value: moznost.KRZAST }, moznost.NAZEVKRZ)
+  else return option({ className: "", value: moznost.k }, moznost.n);
 }
 
 function selectBox(model, allText, onchange) {
   switch (allText) {
     case "Všechny kraje": {
       return select({ className: "w-3 pa1", onchange }, [
-        option({ className: "", value: "all" }, allText),
-        model.kraje.map((moznost) => generateOption(moznost)),
+        option({ className: "", value: 0 }, allText),
+        model.kraje
+          .filter((k) => {
+            if (model.vybranaStrana === 0) return true;
+            // u každého kraje ověřit, jestli v něm vybranaStrana kandiduje
+            const zkoumanaStrana = model.strany.filter(s => s.k === model.vybranaStrana);
+            const kodUcasti = zkoumanaStrana[0].r.charAt(k.KRZAST-1);
+            if ( kodUcasti === "0") return true;
+            else return false;
+          })
+          .map((moznost) => generateOption(moznost)),
       ]);
     }
     case "Všechny strany": {
       return select({ className: "w-3 pa1", onchange }, [
-        option({ className: "", value: "all" }, allText),
+        option({ className: "", value: 0 }, allText),
         model.strany
-          .filter(s => {
-            if (model.vybranyKraj===0) return s;
+          .filter((s) => {
+            if (model.vybranyKraj === 0) return true;
             const kodUcasti = s.r.charAt(model.vybranyKraj - 1);
-            if (kodUcasti === "0") return s;
+            if (kodUcasti === "0") return true;
+            else return false;
           })
-          .map(moznost => generateOption(moznost)),
+          .map((moznost) => generateOption(moznost)),
       ]);
     }
   }
@@ -172,7 +182,7 @@ function formView(dispatch, model) {
         dispatch(vyberKraj(Number(e.target.value)))
       ),
       selectBox(model, "Všechny strany", (e) =>
-        dispatch(vyberStranu(e.target.value))
+        dispatch(vyberStranu(Number(e.target.value)))
       ),
       form(
         {
@@ -207,6 +217,7 @@ function view(dispatch, model) {
     makePagination(dispatch, model),
     h2({ className: "sans-serif f3 pv1 bb" }, "Vámi vybraná kandidátka"),
     pre(JSON.stringify(model.vybranyKraj, null, 2)),
+    pre(JSON.stringify(model.vybranaStrana, null, 2)),
     pre(JSON.stringify(model.searchTerm, null, 2)),
   ]);
 }
