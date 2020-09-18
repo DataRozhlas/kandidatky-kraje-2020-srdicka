@@ -75,7 +75,9 @@ function makePagination(dispatch, model) {
 function naporcujKandidaty(model) {
   const minKand = model.isMobile ? model.currPage * 10 : model.currPage * 20;
   const maxKand = model.isMobile ? minKand + 10 : minKand + 20;
-  return model.kandidati.filter(k => k.s === 1 && k.f === 1).slice(minKand, maxKand);
+  return model.kandidati
+    .filter((k) => k.s === 1 && k.f === 1)
+    .slice(minKand, maxKand);
 }
 
 // tabulky
@@ -135,11 +137,27 @@ function generateOption(moznost) {
   else return option({ className: "", value: moznost.nk }, moznost.n);
 }
 
-function selectBox(moznosti, allText, onchange) {
-  return select({ className: "w-3 pa1", onchange }, [
-    option({ className: "", value: "all" }, allText),
-    moznosti.map((moznost) => generateOption(moznost)),
-  ]);
+function selectBox(model, allText, onchange) {
+  switch (allText) {
+    case "Všechny kraje": {
+      return select({ className: "w-3 pa1", onchange }, [
+        option({ className: "", value: "all" }, allText),
+        model.kraje.map((moznost) => generateOption(moznost)),
+      ]);
+    }
+    case "Všechny strany": {
+      return select({ className: "w-3 pa1", onchange }, [
+        option({ className: "", value: "all" }, allText),
+        model.strany
+          .filter(s => {
+            if (model.vybranyKraj===0) return s;
+            const kodUcasti = s.r.charAt(model.vybranyKraj - 1);
+            if (kodUcasti === "0") return s;
+          })
+          .map(moznost => generateOption(moznost)),
+      ]);
+    }
+  }
 }
 
 function formView(dispatch, model) {
@@ -150,10 +168,10 @@ function formView(dispatch, model) {
         "mw-100 center flex flex-wrap justify-between sans-serif f5-m f5-l f7",
     },
     [
-      selectBox(model.kraje, "Všechny kraje", (e) =>
+      selectBox(model, "Všechny kraje", (e) =>
         dispatch(vyberKraj(Number(e.target.value)))
       ),
-      selectBox(model.strany, "Všechny strany", (e) =>
+      selectBox(model, "Všechny strany", (e) =>
         dispatch(vyberStranu(e.target.value))
       ),
       form(
@@ -165,7 +183,7 @@ function formView(dispatch, model) {
           input({
             className: "input-reset ba",
             type: "text",
-            oninput: e => {
+            oninput: (e) => {
               dispatch(searchTermInput(e.target.value));
             },
             value: searchTerm,
