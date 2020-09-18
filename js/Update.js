@@ -35,7 +35,7 @@ export function zmenStranku(currPage) {
 }
 
 function sumVisible(acc, kandidat) {
-  return acc + (kandidat.s + kandidat.f === 2 ? 1 : 0);
+  return acc + (kandidat.s + kandidat.f + kandidat.q === 3 ? 1 : 0);
 }
 
 function update(msg, model) {
@@ -64,11 +64,16 @@ function update(msg, model) {
       };
     }
     case MSGS.VYBRANY_KRAJ: {
+    // když se změní kraj
       const { vybranyKraj } = msg;
+    // tak předělej model kandidátů
       const kandidati = model.kandidati.map((k) => {
+    // pokud je kandidát z vybraného kraje nebo když jsou vybrané všechny kraje, tak mu změň filtr a search na zobrazit
         if (k.z === vybranyKraj || vybranyKraj === 0) return { ...k, f: 1, s: 1 };
+    // jinak mu změň filtr na schovat a search na zobrazit
         else return { ...k, f: 0, s: 1 };
       });
+    // a uprav počet zobrazených kandidátů  
       const zobrazujiKandidatu = kandidati.reduce(sumVisible, 0);
       return {
         ...model,
@@ -80,10 +85,14 @@ function update(msg, model) {
       };
     }
     case MSGS.VYBRANA_STRANA: {
+    // když se změní strana
       const { vybranaStrana } = msg;
+    // tak předělej model kandidátů
       const kandidati = model.kandidati.map((k) => {
-        if (k.k === vybranaStrana || vybranaStrana === 0) return { ...k, f: 1, s: 1 };
-        else return { ...k, f: 0, s: 1 };
+    // pokud je kandidát z vybrané strany nebo když jsou vybrané všechny strany, tak mu změň q filtr a search na zobrazit
+        if (k.k === vybranaStrana || vybranaStrana === 0) return { ...k, q: 1, s: 1 };
+    // jinak mu změň q filtr na schovat a search na zobrazit
+        else return { ...k, q: 0, s: 1 };
       });
       const zobrazujiKandidatu = kandidati.reduce(sumVisible, 0);
       return {

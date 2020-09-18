@@ -76,7 +76,7 @@ function naporcujKandidaty(model) {
   const minKand = model.isMobile ? model.currPage * 10 : model.currPage * 20;
   const maxKand = model.isMobile ? minKand + 10 : minKand + 20;
   return model.kandidati
-    .filter((k) => k.s === 1 && k.f === 1)
+    .filter((k) => k.s === 1 && k.f === 1 && k.q === 1)
     .slice(minKand, maxKand);
 }
 
@@ -131,31 +131,40 @@ function tableView(dispatch, kandidati) {
 
 // menu
 
-function generateOption(moznost) {  
-  if (Object.keys(moznost).length == 2) 
-    return option({ className: "", value: moznost.KRZAST }, moznost.NAZEVKRZ)
-  else return option({ className: "", value: moznost.k }, moznost.n);
+// function setSelected(id, valueToSelect) {
+//   const element = document.getElementById(id);
+//   element.value = String(valueToSelect);
+// }
+
+// přidej atribut selected u option podle modelu
+
+function generateOption(moznost, model) {
+  if (Object.keys(moznost).length == 2)
+    return option({ className: "", value: moznost.KRZAST, selected: model.vybranyKraj === moznost.KRZAST }, moznost.NAZEVKRZ);
+  else return option({ className: "", value: moznost.k, selected: model.vybranaStrana === moznost.k }, moznost.n);
 }
 
 function selectBox(model, allText, onchange) {
   switch (allText) {
     case "Všechny kraje": {
-      return select({ className: "w-3 pa1", onchange }, [
+      return select({ className: "w-3 pa1", id: "krajSelectBox", onchange }, [
         option({ className: "", value: 0 }, allText),
         model.kraje
           .filter((k) => {
             if (model.vybranaStrana === 0) return true;
             // u každého kraje ověřit, jestli v něm vybranaStrana kandiduje
-            const zkoumanaStrana = model.strany.filter(s => s.k === model.vybranaStrana);
-            const kodUcasti = zkoumanaStrana[0].r.charAt(k.KRZAST-1);
-            if ( kodUcasti === "0") return true;
+            const zkoumanaStrana = model.strany.filter(
+              (s) => s.k === model.vybranaStrana
+            );
+            const kodUcasti = zkoumanaStrana[0].r.charAt(k.KRZAST - 1);
+            if (kodUcasti === "0") return true;
             else return false;
           })
-          .map((moznost) => generateOption(moznost)),
+          .map((moznost) => generateOption(moznost, model)),
       ]);
     }
     case "Všechny strany": {
-      return select({ className: "w-3 pa1", onchange }, [
+      return select({ className: "w-3 pa1", id: "stranaSelectBox", onchange }, [
         option({ className: "", value: 0 }, allText),
         model.strany
           .filter((s) => {
@@ -164,7 +173,7 @@ function selectBox(model, allText, onchange) {
             if (kodUcasti === "0") return true;
             else return false;
           })
-          .map((moznost) => generateOption(moznost)),
+          .map((moznost) => generateOption(moznost, model)),
       ]);
     }
   }
