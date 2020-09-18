@@ -51,15 +51,19 @@ function makePagination(dispatch, model) {
         ),
     model.isMobile
       ? div(
-        { className: "dib pa1 sans-serif f7-m f6" },
-        `${model.zobrazujiKandidatu} kandidátů`)
+          { className: "dib pa1 sans-serif f7-m f6" },
+          `${model.zobrazujiKandidatu} kandidátů`
+        )
       : div(
-      { className: "dib pa1 sans-serif f7-m f6" },
-      `${model.zobrazujiKandidatu} kandidátů | stránka ${
-        model.currPage + 1
-      } z ${Math.ceil(model.zobrazujiKandidatu / (model.isMobile ? 10 : 20))}`
-    ),
-    model.currPage < Math.floor(model.zobrazujiKandidatu / (model.isMobile ? 10 : 20))
+          { className: "dib pa1 sans-serif f7-m f6" },
+          `${model.zobrazujiKandidatu} kandidátů | stránka ${
+            model.currPage + 1
+          } z ${Math.ceil(
+            model.zobrazujiKandidatu / (model.isMobile ? 10 : 20)
+          )}`
+        ),
+    model.currPage <
+    Math.floor(model.zobrazujiKandidatu / (model.isMobile ? 10 : 20))
       ? makeNavButton("Další →", dispatch)
       : span(
           { className: `dib f4 b pa1 sans-serif`, style: "visibility:hidden" },
@@ -69,9 +73,9 @@ function makePagination(dispatch, model) {
 }
 
 function naporcujKandidaty(model) {
-  let minKand = model.isMobile ? model.currPage * 10 : model.currPage * 20;
-  let maxKand = model.isMobile ? minKand + 10 : minKand + 20;
-  return model.kandidati.filter(k => k.s===1).slice(minKand, maxKand);
+  const minKand = model.isMobile ? model.currPage * 10 : model.currPage * 20;
+  const maxKand = model.isMobile ? minKand + 10 : minKand + 20;
+  return model.kandidati.filter(k => k.s === 1 && k.f === 1).slice(minKand, maxKand);
 }
 
 // tabulky
@@ -112,7 +116,10 @@ function kandidatiBody(dispatch, className, kandidati) {
 
 function tableView(dispatch, kandidati) {
   if (kandidati.length === 0) {
-    return div({ className: "mv2 i black-50" }, "Vašemu zadání neodpovídá žádný kandidát.");
+    return div(
+      { className: "mv2 i black-50" },
+      "Vašemu zadání neodpovídá žádný kandidát."
+    );
   }
   return table({ className: "mv2 w-100 collapse f7", id: "tab1" }, [
     tableHeader,
@@ -138,10 +145,13 @@ function selectBox(moznosti, allText, onchange) {
 function formView(dispatch, model) {
   const { searchTerm } = model;
   return div(
-    { className: "mw-100 center flex flex-wrap justify-between sans-serif f5-m f5-l f7" },
+    {
+      className:
+        "mw-100 center flex flex-wrap justify-between sans-serif f5-m f5-l f7",
+    },
     [
       selectBox(model.kraje, "Všechny kraje", (e) =>
-        dispatch(vyberKraj(e.target.value))
+        dispatch(vyberKraj(Number(e.target.value)))
       ),
       selectBox(model.strany, "Všechny strany", (e) =>
         dispatch(vyberStranu(e.target.value))
@@ -155,7 +165,9 @@ function formView(dispatch, model) {
           input({
             className: "input-reset ba",
             type: "text",
-            oninput: (e) => dispatch(searchTermInput(e.target.value)),
+            oninput: e => {
+              dispatch(searchTermInput(e.target.value));
+            },
             value: searchTerm,
           }),
         ]
@@ -176,7 +188,7 @@ function view(dispatch, model) {
     tableView(dispatch, naporcujKandidaty(model)),
     makePagination(dispatch, model),
     h2({ className: "sans-serif f3 pv1 bb" }, "Vámi vybraná kandidátka"),
-    pre(JSON.stringify(model.isMobile, null, 2)),
+    pre(JSON.stringify(model.vybranyKraj, null, 2)),
     pre(JSON.stringify(model.searchTerm, null, 2)),
   ]);
 }
