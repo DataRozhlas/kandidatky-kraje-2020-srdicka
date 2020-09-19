@@ -2,7 +2,7 @@ title: "Žádná se vám nelíbí? Sestavte si vlastní kandidátku pro krajské
 perex: ""
 coverimg:
 coverimg_note: ""
-styles: []
+styles: ["https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css"]
 libraries: []
 options: [noheader, nopic]
 ---

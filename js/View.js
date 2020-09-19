@@ -1,6 +1,12 @@
 import hh from "hyperscript-helpers";
 import { h } from "virtual-dom";
-import { searchTermInput, vyberStranu, vyberKraj, zmenStranku } from "./Update";
+import {
+  searchTermInput,
+  vyberStranu,
+  vyberKraj,
+  zmenStranku,
+  dejSrdicko,
+} from "./Update";
 
 const {
   pre,
@@ -21,6 +27,7 @@ const {
   a,
   span,
   p,
+  i,
 } = hh(h);
 
 //filtr kandidátů, kteří se mají zobrazit
@@ -79,6 +86,11 @@ function naporcujKandidaty(model) {
     .filter((k) => k.s === 1 && k.f === 1 && k.q === 1)
     .slice(minKand, maxKand);
 }
+// srdíčka
+
+function kresliSrdicko() {
+  return;
+}
 
 // tabulky
 function cell(tag, className, value) {
@@ -87,36 +99,41 @@ function cell(tag, className, value) {
 
 const tableHeader = thead([
   tr([
+    cell(th, "pa1", ""),
     cell(th, "pa1", "Pořadí"),
     cell(th, "pa1", "Jméno"),
     cell(th, "pa1", "Věk"),
     cell(th, "pa1", "Povolání"),
     cell(th, "pa1", "Strana"),
     cell(th, "pa1", "Bydliště"),
-    cell(th, "pa1", ""),
   ]),
 ]);
 
-function kandidatRow(dispatch, className) {
+function kandidatRow(dispatch, className, model) {
   return function (kandidat) {
     return tr({ className }, [
+      cell(td, "pa1", [
+        i({
+          className: "ph1 far fa-heart pointer",
+          onclick: () => dispatch(dejSrdicko(model.kandidati.indexOf(kandidat))),
+        }),
+      ]),
       cell(td, "pa1", kandidat.c),
       cell(td, "pa1", `${kandidat.j} ${kandidat.p}`),
       cell(td, "pa1", kandidat.v),
       cell(td, "pa1", kandidat.po),
       cell(td, "pa1", kandidat.k),
       cell(td, "pa1", kandidat.b),
-      // cell(td, 'pa2', <button><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg></button>),
     ]);
   };
 }
 
-function kandidatiBody(dispatch, className, kandidati) {
-  const rows = kandidati.map(kandidatRow(dispatch, "stripe-dark"));
+function kandidatiBody(dispatch, className, kandidati, model) {
+  const rows = kandidati.map(kandidatRow(dispatch, "stripe-dark", model));
   return tbody({ className }, rows);
 }
 
-function tableView(dispatch, kandidati) {
+function tableView(dispatch, kandidati, model) {
   if (kandidati.length === 0) {
     return div(
       { className: "mv2 i black-50" },
@@ -125,23 +142,31 @@ function tableView(dispatch, kandidati) {
   }
   return table({ className: "mv2 w-100 collapse f7", id: "tab1" }, [
     tableHeader,
-    kandidatiBody(dispatch, "", kandidati),
+    kandidatiBody(dispatch, "", kandidati, model),
   ]);
 }
 
 // menu
 
-// function setSelected(id, valueToSelect) {
-//   const element = document.getElementById(id);
-//   element.value = String(valueToSelect);
-// }
-
-// přidej atribut selected u option podle modelu
-
 function generateOption(moznost, model) {
   if (Object.keys(moznost).length == 2)
-    return option({ className: "", value: moznost.KRZAST, selected: model.vybranyKraj === moznost.KRZAST }, moznost.NAZEVKRZ);
-  else return option({ className: "", value: moznost.k, selected: model.vybranaStrana === moznost.k }, moznost.n);
+    return option(
+      {
+        className: "",
+        value: moznost.KRZAST,
+        selected: model.vybranyKraj === moznost.KRZAST,
+      },
+      moznost.NAZEVKRZ
+    );
+  else
+    return option(
+      {
+        className: "",
+        value: moznost.k,
+        selected: model.vybranaStrana === moznost.k,
+      },
+      moznost.n
+    );
 }
 
 function selectBox(model, allText, onchange) {
@@ -222,7 +247,7 @@ function view(dispatch, model) {
     isMobile(model),
     h2({ className: "sans-serif f3 pv1 bb" }, "Skutečné kandidátky"),
     formView(dispatch, model),
-    tableView(dispatch, naporcujKandidaty(model)),
+    tableView(dispatch, naporcujKandidaty(model), model),
     makePagination(dispatch, model),
     h2({ className: "sans-serif f3 pv1 bb" }, "Vámi vybraná kandidátka"),
     pre(JSON.stringify(model.vybranyKraj, null, 2)),
@@ -231,13 +256,6 @@ function view(dispatch, model) {
   ]);
 }
 
-function srdicko() {
-  // <button>
-  // <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-  //   <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd" />
-  // </svg>
-  // </button>
-}
 
 function selectedTableView() {}
 

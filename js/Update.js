@@ -3,8 +3,15 @@ const MSGS = {
   VYBRANY_KRAJ: "VYBRANY_KRAJ",
   VYBRANA_STRANA: "VYBRANA_STRANA",
   CURR_PAGE: "CURR_PAGE",
-  IS_MOBILE: "IS_MOBILE",
+  DEJ_SRDICKO: "DEJ_SRDICKO",
 };
+
+export function dejSrdicko(id) {
+    return {
+        type: MSGS.DEJ_SRDICKO,
+        id,
+    }
+}
 
 export function searchTermInput(searchTerm) {
   return {
@@ -111,16 +118,12 @@ function update(msg, model) {
       if (currPage === "Další →") newCurrPage = model.currPage++;
       return { ...model, newCurrPage };
     }
+    case MSGS.DEJ_SRDICKO: {
+      const {id} = msg;
+      console.log(id);
+    }
   }
   return model;
 }
-
-function selectStrana() {}
-
-function selectKraj() {}
-
-function dejSrdicko() {}
-
-function odeberSrdicko() {}
 
 export default update;
