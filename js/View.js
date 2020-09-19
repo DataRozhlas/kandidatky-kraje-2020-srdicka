@@ -117,6 +117,12 @@ function jeVybrany(model, kandidat) {
 }
 
 // tabulky
+ function pripravVybrane(model) {
+  const vybrani = JSON.parse(localStorage.kandidatiSrdicka);
+  const zobrazit = model.kandidati.filter((k, i) => vybrani.includes(i));
+  return zobrazit;
+ }
+
 function zjistiStranu(model, id) {
   const strana = model.strany.filter((s) => s.k === id);
   return strana[0].nk;
@@ -168,11 +174,17 @@ function kandidatiBody(dispatch, className, kandidati, model) {
   return tbody({ className }, rows);
 }
 
-function tableView(dispatch, model, kandidati) {
-  if (kandidati.length === 0) {
+function tableView(dispatch, model, kandidati, vybrani) {
+  if (kandidati.length === 0 && !vybrani) {
     return div(
       { className: "mv2 sans-serif" },
       "Vašemu hledání neodpovídá žádný kandidát. Zkuste něco jiného!"
+    );
+  }
+  if (kandidati.length === 0 && vybrani) {
+    return div(
+      { className: "mv2 sans-serif" },
+      "Zatím jste nikoho nevybrali. Zkuste někomu dát srdíčko!"
     );
   }
   return table({ className: "mv2 w-100 collapse f6-ns f7", id: "tab1" }, [
@@ -278,19 +290,30 @@ function isMobile(model) {
   window.innerWidth < 600 ? (model.isMobile = true) : (model.isMobile = false);
 }
 
+function sklonujKandidata(cislo) {
+  switch (cislo) {
+    case 1: return `${cislo} kandidát`
+    case 2: return `${cislo} kandidáti`
+    case 3: return `${cislo} kandidáti`
+    case 4: return `${cislo} kandidáti`
+    default: return `${cislo} kandidátů`
+  }
+}
+
 function view(dispatch, model) {
   return div({ className: "mw-100 center" }, [
     isMobile(model),
     h2({ className: "sans-serif f3 pv1 bb" }, "Skutečné kandidátky"),
     formView(dispatch, model),
-    tableView(dispatch, model, naporcujKandidaty(model)),
+    tableView(dispatch, model, naporcujKandidaty(model), false),
     makePagination(dispatch, model),
     h2({ className: "sans-serif f3 pv1 bb" }, "Vámi vybraná kandidátka"),
+    tableView(dispatch, model, pripravVybrane(model), true),
+    div({ className: "dib pa2 w-100 sans-serif f7-m f6 tc" }, sklonujKandidata(JSON.parse(localStorage.kandidatiSrdicka).length)),
     pre(JSON.stringify(localStorage.getItem("kandidatiSrdicka"), null, 2)),
   ]);
 }
 
-function selectedTableView() {}
 
 function drawCharts() {}
 
