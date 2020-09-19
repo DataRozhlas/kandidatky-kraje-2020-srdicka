@@ -5,7 +5,7 @@ import {
   vyberStranu,
   vyberKraj,
   zmenStranku,
-  dejSrdicko,
+  srdicko,
 } from "./Update";
 
 const {
@@ -30,7 +30,6 @@ const {
   i,
 } = hh(h);
 
-//filtr kandidátů, kteří se mají zobrazit
 
 //paginace
 
@@ -88,8 +87,34 @@ function naporcujKandidaty(model) {
 }
 // srdíčka
 
-function kresliSrdicko() {
-  return;
+function kresliSrdicko(dispatch, model, kandidat, jeVybrany) {
+  if (!jeVybrany) {
+    return i({
+      className: "ph1 far fa-heart pointer hover-red",
+      title: "klikni a dáš srdíčko",
+      onclick: () => {
+        dispatch(srdicko(model.kandidati.indexOf(kandidat)));
+      },
+    });
+  } else {
+    return i({
+      className: "ph1 fas fa-heart pointer red hover-black",
+      title: "klikni a sebereš srdíčko",
+      onclick: () => {
+        dispatch(srdicko(model.kandidati.indexOf(kandidat)));
+      },
+    });
+  }
+}
+
+function jeVybrany(model, kandidat) {
+  const id = model.kandidati.indexOf(kandidat);
+  const vysledek =
+    localStorage.getItem("kandidatiSrdicka") &&
+    JSON.parse(localStorage.kandidatiSrdicka).includes(id)
+      ? true
+      : false;
+  return vysledek;
 }
 
 // tabulky
@@ -112,12 +137,11 @@ const tableHeader = thead([
 function kandidatRow(dispatch, className, model) {
   return function (kandidat) {
     return tr({ className }, [
-      cell(td, "pa1", [
-        i({
-          className: "ph1 far fa-heart pointer",
-          onclick: () => dispatch(dejSrdicko(model.kandidati.indexOf(kandidat))),
-        }),
-      ]),
+      cell(
+        td,
+        "pa1",
+        kresliSrdicko(dispatch, model, kandidat, jeVybrany(model, kandidat))
+      ),
       cell(td, "pa1", kandidat.c),
       cell(td, "pa1", `${kandidat.j} ${kandidat.p}`),
       cell(td, "pa1", kandidat.v),
@@ -253,7 +277,6 @@ function view(dispatch, model) {
     pre(JSON.stringify(localStorage.getItem("kandidatiSrdicka"), null, 2)),
   ]);
 }
-
 
 function selectedTableView() {}
 

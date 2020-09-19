@@ -3,14 +3,14 @@ const MSGS = {
   VYBRANY_KRAJ: "VYBRANY_KRAJ",
   VYBRANA_STRANA: "VYBRANA_STRANA",
   CURR_PAGE: "CURR_PAGE",
-  DEJ_SRDICKO: "DEJ_SRDICKO",
+  SRDICKO: "SRDICKO",
 };
 
-export function dejSrdicko(id) {
-    return {
-        type: MSGS.DEJ_SRDICKO,
-        id,
-    }
+export function srdicko(id) {
+  return {
+    type: MSGS.SRDICKO,
+    id,
+  };
 }
 
 export function searchTermInput(searchTerm) {
@@ -71,16 +71,17 @@ function update(msg, model) {
       };
     }
     case MSGS.VYBRANY_KRAJ: {
-    // když se změní kraj
+      // když se změní kraj
       const { vybranyKraj } = msg;
-    // tak předělej model kandidátů
+      // tak předělej model kandidátů
       const kandidati = model.kandidati.map((k) => {
-    // pokud je kandidát z vybraného kraje nebo když jsou vybrané všechny kraje, tak mu změň filtr a search na zobrazit
-        if (k.z === vybranyKraj || vybranyKraj === 0) return { ...k, f: 1, s: 1 };
-    // jinak mu změň filtr na schovat a search na zobrazit
+        // pokud je kandidát z vybraného kraje nebo když jsou vybrané všechny kraje, tak mu změň filtr a search na zobrazit
+        if (k.z === vybranyKraj || vybranyKraj === 0)
+          return { ...k, f: 1, s: 1 };
+        // jinak mu změň filtr na schovat a search na zobrazit
         else return { ...k, f: 0, s: 1 };
       });
-    // a uprav počet zobrazených kandidátů  
+      // a uprav počet zobrazených kandidátů
       const zobrazujiKandidatu = kandidati.reduce(sumVisible, 0);
       return {
         ...model,
@@ -92,13 +93,14 @@ function update(msg, model) {
       };
     }
     case MSGS.VYBRANA_STRANA: {
-    // když se změní strana
+      // když se změní strana
       const { vybranaStrana } = msg;
-    // tak předělej model kandidátů
+      // tak předělej model kandidátů
       const kandidati = model.kandidati.map((k) => {
-    // pokud je kandidát z vybrané strany nebo když jsou vybrané všechny strany, tak mu změň q filtr a search na zobrazit
-        if (k.k === vybranaStrana || vybranaStrana === 0) return { ...k, q: 1, s: 1 };
-    // jinak mu změň q filtr na schovat a search na zobrazit
+        // pokud je kandidát z vybrané strany nebo když jsou vybrané všechny strany, tak mu změň q filtr a search na zobrazit
+        if (k.k === vybranaStrana || vybranaStrana === 0)
+          return { ...k, q: 1, s: 1 };
+        // jinak mu změň q filtr na schovat a search na zobrazit
         else return { ...k, q: 0, s: 1 };
       });
       const zobrazujiKandidatu = kandidati.reduce(sumVisible, 0);
@@ -118,12 +120,22 @@ function update(msg, model) {
       if (currPage === "Další →") newCurrPage = model.currPage++;
       return { ...model, newCurrPage };
     }
-    case MSGS.DEJ_SRDICKO: {
-      const {id} = msg;
-      let ulozeniKandidati = [];    
-      localStorage.getItem("kandidatiSrdicka") ? ulozeniKandidati = JSON.parse(localStorage.kandidatiSrdicka) : null;      
-      const updatovaniKandidati = [...ulozeniKandidati, Number(id)];
-      localStorage.kandidatiSrdicka = JSON.stringify(updatovaniKandidati);
+    case MSGS.SRDICKO: {
+      const { id } = msg;
+      let ulozeniKandidati = [];
+      localStorage.getItem("kandidatiSrdicka")
+        ? (ulozeniKandidati = JSON.parse(localStorage.kandidatiSrdicka))
+        : null;
+      const index = ulozeniKandidati.indexOf(id);
+      if (index < 0) {
+        localStorage.kandidatiSrdicka = JSON.stringify([
+          ...ulozeniKandidati,
+          Number(id),
+        ]);
+      } else {
+        ulozeniKandidati.splice(index, 1);
+        localStorage.kandidatiSrdicka = JSON.stringify(ulozeniKandidati);
+      }
     }
   }
   return model;
