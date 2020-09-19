@@ -120,7 +120,10 @@ function update(msg, model) {
     }
     case MSGS.DEJ_SRDICKO: {
       const {id} = msg;
-      console.log(id);
+      let ulozeniKandidati = [];    
+      localStorage.getItem("kandidatiSrdicka") ? ulozeniKandidati = JSON.parse(localStorage.kandidatiSrdicka) : null;      
+      const updatovaniKandidati = [...ulozeniKandidati, Number(id)];
+      localStorage.kandidatiSrdicka = JSON.stringify(updatovaniKandidati);
     }
   }
   return model;

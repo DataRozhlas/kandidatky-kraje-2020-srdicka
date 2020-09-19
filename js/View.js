@@ -250,9 +250,7 @@ function view(dispatch, model) {
     tableView(dispatch, naporcujKandidaty(model), model),
     makePagination(dispatch, model),
     h2({ className: "sans-serif f3 pv1 bb" }, "Vámi vybraná kandidátka"),
-    pre(JSON.stringify(model.vybranyKraj, null, 2)),
-    pre(JSON.stringify(model.vybranaStrana, null, 2)),
-    pre(JSON.stringify(model.searchTerm, null, 2)),
+    pre(JSON.stringify(localStorage.getItem("kandidatiSrdicka"), null, 2)),
   ]);
 }
 
