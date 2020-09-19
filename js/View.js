@@ -30,7 +30,6 @@ const {
   i,
 } = hh(h);
 
-
 //paginace
 
 function makeNavButton(text, dispatch) {
@@ -98,7 +97,7 @@ function kresliSrdicko(dispatch, model, kandidat, jeVybrany) {
     });
   } else {
     return i({
-      className: "ph1 fas fa-heart pointer red hover-black",
+      className: "ph1 fas fa-heart pointer red hover-washed-red",
       title: "klikni a sebereš srdíčko",
       onclick: () => {
         dispatch(srdicko(model.kandidati.indexOf(kandidat)));
@@ -118,6 +117,16 @@ function jeVybrany(model, kandidat) {
 }
 
 // tabulky
+function zjistiStranu(model, id) {
+  const strana = model.strany.filter((s) => s.k === id);
+  return strana[0].nk;
+}
+
+function zjistiKraj(model, id) {
+  const kraj = model.kraje.filter((k) => k.KRZAST === id);
+  return kraj[0].NAZEVKRZ;
+}
+
 function cell(tag, className, value) {
   return tag({ className }, value);
 }
@@ -125,12 +134,13 @@ function cell(tag, className, value) {
 const tableHeader = thead([
   tr([
     cell(th, "pa1", ""),
-    cell(th, "pa1", "Pořadí"),
     cell(th, "pa1", "Jméno"),
     cell(th, "pa1", "Věk"),
     cell(th, "pa1", "Povolání"),
-    cell(th, "pa1", "Strana"),
     cell(th, "pa1", "Bydliště"),
+    cell(th, "pa1", "Kraj"),
+    cell(th, "pa1", "Strana"),
+    cell(th, "pa1", "Pořadí"),
   ]),
 ]);
 
@@ -142,12 +152,13 @@ function kandidatRow(dispatch, className, model) {
         "pa1",
         kresliSrdicko(dispatch, model, kandidat, jeVybrany(model, kandidat))
       ),
-      cell(td, "pa1", kandidat.c),
       cell(td, "pa1", `${kandidat.j} ${kandidat.p}`),
       cell(td, "pa1", kandidat.v),
       cell(td, "pa1", kandidat.po),
-      cell(td, "pa1", kandidat.k),
       cell(td, "pa1", kandidat.b),
+      cell(td, "pa1", zjistiKraj(model, kandidat.z)),
+      cell(td, "pa1", zjistiStranu(model, kandidat.k)),
+      cell(td, "pa1", kandidat.c),
     ]);
   };
 }
@@ -157,14 +168,14 @@ function kandidatiBody(dispatch, className, kandidati, model) {
   return tbody({ className }, rows);
 }
 
-function tableView(dispatch, kandidati, model) {
+function tableView(dispatch, model, kandidati) {
   if (kandidati.length === 0) {
     return div(
-      { className: "mv2 i black-50" },
-      "Vašemu zadání neodpovídá žádný kandidát."
+      { className: "mv2 sans-serif" },
+      "Vašemu hledání neodpovídá žádný kandidát. Zkuste něco jiného!"
     );
   }
-  return table({ className: "mv2 w-100 collapse f7", id: "tab1" }, [
+  return table({ className: "mv2 w-100 collapse f6-ns f7", id: "tab1" }, [
     tableHeader,
     kandidatiBody(dispatch, "", kandidati, model),
   ]);
@@ -251,6 +262,7 @@ function formView(dispatch, model) {
           input({
             className: "input-reset ba",
             type: "text",
+            placeholder: "jméno, povolání, bydliště",
             oninput: (e) => {
               dispatch(searchTermInput(e.target.value));
             },
@@ -271,7 +283,7 @@ function view(dispatch, model) {
     isMobile(model),
     h2({ className: "sans-serif f3 pv1 bb" }, "Skutečné kandidátky"),
     formView(dispatch, model),
-    tableView(dispatch, naporcujKandidaty(model), model),
+    tableView(dispatch, model, naporcujKandidaty(model)),
     makePagination(dispatch, model),
     h2({ className: "sans-serif f3 pv1 bb" }, "Vámi vybraná kandidátka"),
     pre(JSON.stringify(localStorage.getItem("kandidatiSrdicka"), null, 2)),
