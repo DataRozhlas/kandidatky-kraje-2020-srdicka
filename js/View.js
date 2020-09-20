@@ -3,6 +3,7 @@ import { h } from "virtual-dom";
 import Highcharts from "highcharts";
 import grafZeny from "./charts/grafZeny";
 import grafVek from "./charts/grafVek";
+import grafStrany from "./charts/grafStrany";
 import {
   searchTermInput,
   vyberStranu,
@@ -361,7 +362,23 @@ function grafyVybranychInit(model, ls) {
       celkVek / vybraniKandidati.length
     )} let`;
     Highcharts.chart("graf-vek-2", grafVek);
-    Highcharts.chart("graf-strany-2", {});
+
+    const stranyPocty = model.strany.map((s) => {
+      const kandidatiZaStranu = vybraniKandidati.reduce((acc, kandidat) => {
+        if (kandidat.k === s.k) {
+          acc = acc + 1;
+          return acc;
+        } else {
+          return acc;
+        }
+      }, 0);
+      return { s: s.nk, k: kandidatiZaStranu };
+    });
+    stranyPocty.sort((a, b) => parseFloat(b.k) - parseFloat(a.k));
+    const vysledek = stranyPocty.slice(0, 10).filter((s) => s.k > 0);
+    grafStrany.series[0].data = vysledek.map((v) => v.k);
+    grafStrany.xAxis.categories = vysledek.map((v) => v.s);
+    Highcharts.chart("graf-strany-2", grafStrany);
   }
 }
 
@@ -414,9 +431,14 @@ function view(dispatch, model) {
     ),
     vlozGrafy(model, true),
     document.addEventListener("DOMContentLoaded", function (event) {
+      Highcharts.setOptions({
+        lang: {
+          numericSymbols: [" tis.", " mil.", " mld.", "T", "P", "E"],
+        },
+      });
       Highcharts.chart("graf-zeny-1", grafZeny);
       Highcharts.chart("graf-vek-1", grafVek);
-      Highcharts.chart("graf-strany-1", {});
+      Highcharts.chart("graf-strany-1", grafStrany);
       grafyVybranychInit(model, localStorage.getItem("kandidatiSrdicka"));
     }),
     //pre(JSON.stringify(localStorage.getItem("kandidatiSrdicka"), null, 2)),

@@ -1,6 +1,7 @@
 import Highcharts from "highcharts";
 import grafZeny from "./charts/grafZeny";
 import grafVek from "./charts/grafVek";
+import grafStrany from "./charts/grafStrany";
 
 const MSGS = {
   SEARCH_TERM: "SEARCH_TERM",
@@ -104,13 +105,42 @@ function prekresliGrafVeku(kandidati, zobrazujiKandidatu, cisloGrafu) {
       [0, 0, 0, 0, 0, 0, 0, 0]
     );
     const celkVek = vybraniKandidati.reduce((acc, kandidat) => {
-        return acc + kandidat.v;
+      return acc + kandidat.v;
     }, 0);
     grafVek.series[0].data = ageGroups;
-    grafVek.title.text = `Věk – průměrně ${Math.round(celkVek/zobrazujiKandidatu)} let`;
+    grafVek.title.text = `Věk – průměrně ${Math.round(
+      celkVek / zobrazujiKandidatu
+    )} let`;
     Highcharts.chart(`graf-vek-${cisloGrafu}`, grafVek);
   } else {
     document.getElementById(`graf-vek-${cisloGrafu}`).classList.add("dn");
+  }
+}
+
+function prekresliGrafStran(strany, kandidati, zobrazujiKandidatu, cisloGrafu) {
+  if (zobrazujiKandidatu > 0) {
+    document.getElementById(`graf-strany-${cisloGrafu}`).classList.remove("dn");
+    const vybraniKandidati = kandidati.filter(
+      (k) => k.s === 1 && k.f === 1 && k.q === 1
+    );
+    const stranyPocty = strany.map(s => {
+       const kandidatiZaStranu = vybraniKandidati.reduce((acc, kandidat) => {
+           if (kandidat.k === s.k) {
+                acc = acc + 1;
+               return acc;
+           } else {
+               return acc;
+           }
+       },0);
+       return {s: s.nk, k: kandidatiZaStranu}
+    });
+    stranyPocty.sort((a, b) => parseFloat(b.k) - parseFloat(a.k));
+    const vysledek = stranyPocty.slice(0,10).filter(s => s.k > 0);
+    grafStrany.series[0].data = vysledek.map(v => v.k);
+    grafStrany.xAxis.categories = vysledek.map(v => v.s);
+    Highcharts.chart(`graf-strany-${cisloGrafu}`, grafStrany);
+  } else {
+    document.getElementById(`graf-strany-${cisloGrafu}`).classList.add("dn");
   }
 }
 
@@ -133,6 +163,8 @@ function update(msg, model) {
       // překresli grafy
       prekresliGrafZen(kandidati, zobrazujiKandidatu, "1");
       prekresliGrafVeku(kandidati, zobrazujiKandidatu, "1");
+      prekresliGrafStran(model.strany, kandidati, zobrazujiKandidatu, "1");
+
       return {
         ...model,
         searchTerm,
@@ -158,6 +190,8 @@ function update(msg, model) {
       // a překresli grafy
       prekresliGrafZen(kandidati, zobrazujiKandidatu, "1");
       prekresliGrafVeku(kandidati, zobrazujiKandidatu, "1");
+      prekresliGrafStran(model.strany, kandidati, zobrazujiKandidatu, "1");
+
       return {
         ...model,
         kandidati,
@@ -182,6 +216,8 @@ function update(msg, model) {
       // a překresli grafy
       prekresliGrafZen(kandidati, zobrazujiKandidatu, "1");
       prekresliGrafVeku(kandidati, zobrazujiKandidatu, "1");
+      prekresliGrafStran(model.strany, kandidati, zobrazujiKandidatu, "1");
+
       return {
         ...model,
         kandidati,
@@ -209,28 +245,31 @@ function update(msg, model) {
         const noviUlozeniKandidati = [...ulozeniKandidati, Number(id)];
         localStorage.kandidatiSrdicka = JSON.stringify(noviUlozeniKandidati);
         // překresli grafy
-        prekresliGrafZen(
-          noviUlozeniKandidati.map((id) => model.kandidati[id]),
+        const kandidatiDoGrafu = noviUlozeniKandidati.map(
+          (id) => model.kandidati[id]
+        );
+        prekresliGrafZen(kandidatiDoGrafu, noviUlozeniKandidati.length, "2");
+        prekresliGrafVeku(kandidatiDoGrafu, noviUlozeniKandidati.length, "2");
+        prekresliGrafStran(
+          model.strany,
+          kandidatiDoGrafu,
           noviUlozeniKandidati.length,
           "2"
         );
-        prekresliGrafVeku(
-          noviUlozeniKandidati.map((id) => model.kandidati[id]),
-          noviUlozeniKandidati.length,
-          "2"
-        );
+
         // pokud vybraný kandidát v LS je, odeber ho
       } else {
         ulozeniKandidati.splice(index, 1);
         localStorage.kandidatiSrdicka = JSON.stringify(ulozeniKandidati);
         //překresli grafy
-        prekresliGrafZen(
-          ulozeniKandidati.map((id) => model.kandidati[id]),
-          ulozeniKandidati.length,
-          "2"
+        const kandidatiDoGrafu = ulozeniKandidati.map(
+          (id) => model.kandidati[id]
         );
-        prekresliGrafVeku(
-          ulozeniKandidati.map((id) => model.kandidati[id]),
+        prekresliGrafZen(kandidatiDoGrafu, ulozeniKandidati.length, "2");
+        prekresliGrafVeku(kandidatiDoGrafu, ulozeniKandidati.length, "2");
+        prekresliGrafStran(
+          model.strany,
+          kandidatiDoGrafu,
           ulozeniKandidati.length,
           "2"
         );
