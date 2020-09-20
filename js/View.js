@@ -1,5 +1,7 @@
 import hh from "hyperscript-helpers";
 import { h } from "virtual-dom";
+import Highcharts from "highcharts";
+import grafZeny from "./charts/grafZeny";
 import {
   searchTermInput,
   vyberStranu,
@@ -26,7 +28,6 @@ const {
   nav,
   a,
   span,
-  p,
   i,
 } = hh(h);
 
@@ -57,18 +58,18 @@ function makePagination(dispatch, model) {
     model.isMobile
       ? div(
           { className: "dib pa1 sans-serif f7-m f6" },
-          `${model.zobrazujiKandidatu} kandidátů`
+          `${sklonujKandidata(model.zobrazujiKandidatu)}`
         )
       : div(
           { className: "dib pa1 sans-serif f7-m f6" },
-          `${model.zobrazujiKandidatu} kandidátů | stránka ${
+          `${sklonujKandidata(model.zobrazujiKandidatu)} | stránka ${
             model.currPage + 1
           } z ${Math.ceil(
-            model.zobrazujiKandidatu / (model.isMobile ? 10 : 20)
+            model.zobrazujiKandidatu / (model.isMobile ? 5 : 10)
           )}`
         ),
     model.currPage <
-    Math.floor(model.zobrazujiKandidatu / (model.isMobile ? 10 : 20))
+    Math.floor(model.zobrazujiKandidatu / (model.isMobile ? 5 : 10))
       ? makeNavButton("Další →", dispatch)
       : span(
           { className: `dib f4 b pa1 sans-serif`, style: "visibility:hidden" },
@@ -78,8 +79,8 @@ function makePagination(dispatch, model) {
 }
 
 function naporcujKandidaty(model) {
-  const minKand = model.isMobile ? model.currPage * 10 : model.currPage * 20;
-  const maxKand = model.isMobile ? minKand + 10 : minKand + 20;
+  const minKand = model.isMobile ? model.currPage * 5 : model.currPage * 10;
+  const maxKand = model.isMobile ? minKand + 5 : minKand + 10;
   return model.kandidati
     .filter((k) => k.s === 1 && k.f === 1 && k.q === 1)
     .slice(minKand, maxKand);
@@ -108,20 +109,19 @@ function kresliSrdicko(dispatch, model, kandidat, jeVybrany) {
 
 function jeVybrany(model, kandidat) {
   const id = model.kandidati.indexOf(kandidat);
-  const vysledek =
-    localStorage.getItem("kandidatiSrdicka") &&
-    JSON.parse(localStorage.kandidatiSrdicka).includes(id)
+  const vysledek = JSON.parse(localStorage.kandidatiSrdicka).includes(id)
       ? true
       : false;
   return vysledek;
 }
 
 // tabulky
- function pripravVybrane(model) {
+function pripravVybrane(model) {
   const vybrani = JSON.parse(localStorage.kandidatiSrdicka);
-  const zobrazit = model.kandidati.filter((k, i) => vybrani.includes(i));
+  const zobrazit = vybrani.map((id) => model.kandidati[id]);
+  //  const zobrazit = model.kandidati.filter((k, i) => vybrani.includes(i));
   return zobrazit;
- }
+}
 
 function zjistiStranu(model, id) {
   const strana = model.strany.filter((s) => s.k === id);
@@ -164,7 +164,7 @@ function kandidatRow(dispatch, className, model) {
       cell(td, "pa1", kandidat.b),
       cell(td, "pa1", zjistiKraj(model, kandidat.z)),
       cell(td, "pa1", zjistiStranu(model, kandidat.k)),
-      cell(td, "pa1", kandidat.c),
+      cell(td, "pa1 tc", kandidat.c),
     ]);
   };
 }
@@ -292,35 +292,93 @@ function isMobile(model) {
 
 function sklonujKandidata(cislo) {
   switch (cislo) {
-    case 1: return `${cislo} kandidát`
-    case 2: return `${cislo} kandidáti`
-    case 3: return `${cislo} kandidáti`
-    case 4: return `${cislo} kandidáti`
-    default: return `${cislo} kandidátů`
+    case 1:
+      return `${cislo} kandidát`;
+    case 2:
+      return `${cislo} kandidáti`;
+    case 3:
+      return `${cislo} kandidáti`;
+    case 4:
+      return `${cislo} kandidáti`;
+    default:
+      return `${cislo} kandidátů`;
   }
+}
+
+//grafy
+
+function grafyVybranychInit(model, ls) {  
+  if (JSON.parse(ls).length === 0 ) {
+     document.getElementById("graf-zeny-2").classList.add("dn");
+     document.getElementById("graf-vek-2").classList.add("dn");
+     document.getElementById("graf-strany-2").classList.add("dn");
+   } else {
+    const vybraniKandidati = JSON.parse(ls).map((id) => model.kandidati[id]);
+    const pocetZen = vybraniKandidati.reduce((acc, kandidat) => {
+      return acc + (kandidat.p.slice(-1) === "á" ? 1 : 0);
+    }, 0);
+    grafZeny.series[0].data[1].y = (pocetZen / JSON.parse(ls).length) * 100;
+    grafZeny.series[0].data[0].y = 100 - (pocetZen / JSON.parse(ls).length) * 100;
+    Highcharts.chart("graf-zeny-2", grafZeny);
+     Highcharts.chart("graf-vek-2", {});
+     Highcharts.chart("graf-strany-2", {});
+ }
+}
+
+function vlozGrafZen(model, jenVybrani) {
+  const id = `graf-zeny-${jenVybrani ? "2" : "1"}`;
+  return div({ className: "w-30 h5", id: id }, []);
+}
+
+function vlozGrafVeku(model, jenVybrani) {
+  return div(
+    { className: "w-30 h5", id: `graf-vek-${jenVybrani ? "2" : "1"}` },
+    []
+  );
+}
+
+function vlozGrafStran(model, jenVybrani) {
+  return div(
+    {
+      className: "w-30 h5",
+      id: `graf-strany-${jenVybrani ? "2" : "1"}`,
+    },
+    []
+  );
+}
+
+function vlozGrafy(model, jenVybrani) {
+  return div({ className: "w-100 pa1 flex flex-wrap justify-between" }, [
+    vlozGrafZen(model, jenVybrani),
+    vlozGrafVeku(model, jenVybrani),
+    vlozGrafStran(model, jenVybrani),
+  ]);
 }
 
 function view(dispatch, model) {
   return div({ className: "mw-100 center" }, [
+    localStorage.getItem("kandidatiSrdicka") ? null : localStorage.setItem("kandidatiSrdicka", JSON.stringify([])),
     isMobile(model),
     h2({ className: "sans-serif f3 pv1 bb" }, "Skutečné kandidátky"),
     formView(dispatch, model),
     tableView(dispatch, model, naporcujKandidaty(model), false),
     makePagination(dispatch, model),
+    vlozGrafy(model, false),
     h2({ className: "sans-serif f3 pv1 bb" }, "Vámi vybraná kandidátka"),
     tableView(dispatch, model, pripravVybrane(model), true),
-    div({ className: "dib pa2 w-100 sans-serif f7-m f6 tc" }, sklonujKandidata(JSON.parse(localStorage.kandidatiSrdicka).length)),
-    pre(JSON.stringify(localStorage.getItem("kandidatiSrdicka"), null, 2)),
+    div(
+      { className: "dib pa2 w-100 sans-serif f7-m f6 tc" },
+      sklonujKandidata(JSON.parse(localStorage.kandidatiSrdicka).length)
+    ),
+    vlozGrafy(model, true),
+    document.addEventListener("DOMContentLoaded", function (event) {
+      Highcharts.chart("graf-zeny-1", grafZeny);
+      Highcharts.chart("graf-vek-1", {});
+      Highcharts.chart("graf-strany-1", {});
+      grafyVybranychInit(model, localStorage.getItem("kandidatiSrdicka"));
+    }),
+    //pre(JSON.stringify(localStorage.getItem("kandidatiSrdicka"), null, 2)),
   ]);
 }
-
-
-function drawCharts() {}
-
-function drawChartGender() {}
-
-function drawChartAge() {}
-
-function drawChartParties() {}
 
 export default view;

@@ -1,3 +1,6 @@
+import Highcharts from "highcharts";
+import grafZeny from "./charts/grafZeny";
+
 const MSGS = {
   SEARCH_TERM: "SEARCH_TERM",
   VYBRANY_KRAJ: "VYBRANY_KRAJ",
@@ -45,6 +48,24 @@ function sumVisible(acc, kandidat) {
   return acc + (kandidat.s + kandidat.f + kandidat.q === 3 ? 1 : 0);
 }
 
+//grafy
+function prekresliGrafZen(kandidati, zobrazujiKandidatu, cisloGrafu) {
+  if (zobrazujiKandidatu > 0) {
+    document.getElementById(`graf-zeny-${cisloGrafu}`).classList.remove("dn");
+    const vybraniKandidati = kandidati.filter(
+      (k) => k.s === 1 && k.f === 1 && k.q === 1
+    );
+    const pocetZen = vybraniKandidati.reduce((acc, kandidat) => {
+      return acc + (kandidat.p.slice(-1) === "á" ? 1 : 0);
+    }, 0);
+    grafZeny.series[0].data[1].y = (pocetZen / zobrazujiKandidatu) * 100;
+    grafZeny.series[0].data[0].y = 100 - (pocetZen / zobrazujiKandidatu) * 100;
+    Highcharts.chart(`graf-zeny-${cisloGrafu}`, grafZeny);
+  } else {
+    document.getElementById(`graf-zeny-${cisloGrafu}`).classList.add("dn");
+  }
+}
+
 function update(msg, model) {
   switch (msg.type) {
     case MSGS.SEARCH_TERM: {
@@ -61,6 +82,8 @@ function update(msg, model) {
         } else return { ...k, s: 0 };
       });
       const zobrazujiKandidatu = kandidati.reduce(sumVisible, 0);
+      // překresli grafy
+      prekresliGrafZen(kandidati, zobrazujiKandidatu, "1");
       return {
         ...model,
         searchTerm,
@@ -83,6 +106,8 @@ function update(msg, model) {
       });
       // a uprav počet zobrazených kandidátů
       const zobrazujiKandidatu = kandidati.reduce(sumVisible, 0);
+      // a překresli grafy
+      prekresliGrafZen(kandidati, zobrazujiKandidatu, "1");
       return {
         ...model,
         kandidati,
@@ -104,6 +129,8 @@ function update(msg, model) {
         else return { ...k, q: 0, s: 1 };
       });
       const zobrazujiKandidatu = kandidati.reduce(sumVisible, 0);
+      // a překresli grafy
+      prekresliGrafZen(kandidati, zobrazujiKandidatu, "1");
       return {
         ...model,
         kandidati,
@@ -122,19 +149,22 @@ function update(msg, model) {
     }
     case MSGS.SRDICKO: {
       const { id } = msg;
-      let ulozeniKandidati = [];
-      localStorage.getItem("kandidatiSrdicka")
-        ? (ulozeniKandidati = JSON.parse(localStorage.kandidatiSrdicka))
-        : null;
+      // podívej se do LS a načti z ní uložené kandidáty
+      const ulozeniKandidati = JSON.parse(localStorage.kandidatiSrdicka);
+      // zjisti index vybraného kandidáta  
       const index = ulozeniKandidati.indexOf(id);
+      // pokud vybraný kandidát v LS není, přidej ho
       if (index < 0) {
-        localStorage.kandidatiSrdicka = JSON.stringify([
-          ...ulozeniKandidati,
-          Number(id),
-        ]);
+        const noviUlozeniKandidati = [...ulozeniKandidati, Number(id),];
+        localStorage.kandidatiSrdicka = JSON.stringify(noviUlozeniKandidati);
+        // překresli grafy
+        prekresliGrafZen(noviUlozeniKandidati.map((id) => model.kandidati[id]), noviUlozeniKandidati.length, "2");
+      // pokud vybraný kandidát v LS je, odeber ho  
       } else {
         ulozeniKandidati.splice(index, 1);
         localStorage.kandidatiSrdicka = JSON.stringify(ulozeniKandidati);
+        //překresli grafy
+        prekresliGrafZen(ulozeniKandidati.map((id) => model.kandidati[id]), ulozeniKandidati.length, "2");
       }
     }
   }
