@@ -135,7 +135,7 @@ function prekresliGrafStran(strany, kandidati, zobrazujiKandidatu, cisloGrafu) {
        return {s: s.nk, k: kandidatiZaStranu}
     });
     stranyPocty.sort((a, b) => parseFloat(b.k) - parseFloat(a.k));
-    const vysledek = stranyPocty.slice(0,10).filter(s => s.k > 0);
+    const vysledek = stranyPocty.slice(0,8).filter(s => s.k > 0);
     grafStrany.series[0].data = vysledek.map(v => v.k);
     grafStrany.xAxis.categories = vysledek.map(v => v.s);
     Highcharts.chart(`graf-strany-${cisloGrafu}`, grafStrany);

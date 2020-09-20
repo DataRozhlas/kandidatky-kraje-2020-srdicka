@@ -15,8 +15,6 @@ const grafStrany = {
       "ČSSD",
       "Rozumní",
       "ODS",
-      "STAN",
-      "KDU-ČSL",
     ],
   },
   yAxis: {
@@ -45,7 +43,7 @@ const grafStrany = {
       name: "kandidáti",
       color: "#6464A8",
       showInLegend: false,
-      data: [740, 734, 729, 671, 576, 573, 538, 350, 289, 240],
+      data: [740, 734, 729, 671, 576, 573, 538, 350, ],
     },
   ],
 };
