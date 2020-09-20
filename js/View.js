@@ -2,6 +2,7 @@ import hh from "hyperscript-helpers";
 import { h } from "virtual-dom";
 import Highcharts from "highcharts";
 import grafZeny from "./charts/grafZeny";
+import grafVek from "./charts/grafVek";
 import {
   searchTermInput,
   vyberStranu,
@@ -110,8 +111,8 @@ function kresliSrdicko(dispatch, model, kandidat, jeVybrany) {
 function jeVybrany(model, kandidat) {
   const id = model.kandidati.indexOf(kandidat);
   const vysledek = JSON.parse(localStorage.kandidatiSrdicka).includes(id)
-      ? true
-      : false;
+    ? true
+    : false;
   return vysledek;
 }
 
@@ -307,22 +308,61 @@ function sklonujKandidata(cislo) {
 
 //grafy
 
-function grafyVybranychInit(model, ls) {  
-  if (JSON.parse(ls).length === 0 ) {
-     document.getElementById("graf-zeny-2").classList.add("dn");
-     document.getElementById("graf-vek-2").classList.add("dn");
-     document.getElementById("graf-strany-2").classList.add("dn");
-   } else {
+function grafyVybranychInit(model, ls) {
+  if (JSON.parse(ls).length === 0) {
+    document.getElementById("graf-zeny-2").classList.add("dn");
+    document.getElementById("graf-vek-2").classList.add("dn");
+    document.getElementById("graf-strany-2").classList.add("dn");
+  } else {
     const vybraniKandidati = JSON.parse(ls).map((id) => model.kandidati[id]);
     const pocetZen = vybraniKandidati.reduce((acc, kandidat) => {
       return acc + (kandidat.p.slice(-1) === "á" ? 1 : 0);
     }, 0);
     grafZeny.series[0].data[1].y = (pocetZen / JSON.parse(ls).length) * 100;
-    grafZeny.series[0].data[0].y = 100 - (pocetZen / JSON.parse(ls).length) * 100;
+    grafZeny.series[0].data[0].y =
+      100 - (pocetZen / JSON.parse(ls).length) * 100;
     Highcharts.chart("graf-zeny-2", grafZeny);
-     Highcharts.chart("graf-vek-2", {});
-     Highcharts.chart("graf-strany-2", {});
- }
+
+    const ageGroups = vybraniKandidati.reduce(
+      (acc, kandidat) => {
+        if (kandidat.v < 20) {
+          acc[0] = acc[0] + 1;
+          return acc;
+        } else if (kandidat.v < 30) {
+          acc[1] = acc[1] + 1;
+          return acc;
+        } else if (kandidat.v < 40) {
+          acc[2] = acc[2] + 1;
+          return acc;
+        } else if (kandidat.v < 50) {
+          acc[3] = acc[3] + 1;
+          return acc;
+        } else if (kandidat.v < 60) {
+          acc[4] = acc[4] + 1;
+          return acc;
+        } else if (kandidat.v < 70) {
+          acc[5] = acc[5] + 1;
+          return acc;
+        } else if (kandidat.v < 80) {
+          acc[6] = acc[6] + 1;
+          return acc;
+        } else {
+          acc[7] = acc[7] + 1;
+          return acc;
+        }
+      },
+      [0, 0, 0, 0, 0, 0, 0, 0]
+    );
+    const celkVek = vybraniKandidati.reduce((acc, kandidat) => {
+      return acc + kandidat.v;
+    }, 0);
+    grafVek.series[0].data = ageGroups;
+    grafVek.title.text = `Věk – průměrně ${Math.round(
+      celkVek / vybraniKandidati.length
+    )} let`;
+    Highcharts.chart("graf-vek-2", grafVek);
+    Highcharts.chart("graf-strany-2", {});
+  }
 }
 
 function vlozGrafZen(model, jenVybrani) {
@@ -357,7 +397,9 @@ function vlozGrafy(model, jenVybrani) {
 
 function view(dispatch, model) {
   return div({ className: "mw-100 center" }, [
-    localStorage.getItem("kandidatiSrdicka") ? null : localStorage.setItem("kandidatiSrdicka", JSON.stringify([])),
+    localStorage.getItem("kandidatiSrdicka")
+      ? null
+      : localStorage.setItem("kandidatiSrdicka", JSON.stringify([])),
     isMobile(model),
     h2({ className: "sans-serif f3 pv1 bb" }, "Skutečné kandidátky"),
     formView(dispatch, model),
@@ -373,7 +415,7 @@ function view(dispatch, model) {
     vlozGrafy(model, true),
     document.addEventListener("DOMContentLoaded", function (event) {
       Highcharts.chart("graf-zeny-1", grafZeny);
-      Highcharts.chart("graf-vek-1", {});
+      Highcharts.chart("graf-vek-1", grafVek);
       Highcharts.chart("graf-strany-1", {});
       grafyVybranychInit(model, localStorage.getItem("kandidatiSrdicka"));
     }),

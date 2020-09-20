@@ -1,5 +1,6 @@
 import Highcharts from "highcharts";
 import grafZeny from "./charts/grafZeny";
+import grafVek from "./charts/grafVek";
 
 const MSGS = {
   SEARCH_TERM: "SEARCH_TERM",
@@ -66,6 +67,53 @@ function prekresliGrafZen(kandidati, zobrazujiKandidatu, cisloGrafu) {
   }
 }
 
+function prekresliGrafVeku(kandidati, zobrazujiKandidatu, cisloGrafu) {
+  if (zobrazujiKandidatu > 0) {
+    document.getElementById(`graf-vek-${cisloGrafu}`).classList.remove("dn");
+    const vybraniKandidati = kandidati.filter(
+      (k) => k.s === 1 && k.f === 1 && k.q === 1
+    );
+    const ageGroups = vybraniKandidati.reduce(
+      (acc, kandidat) => {
+        if (kandidat.v < 20) {
+          acc[0] = acc[0] + 1;
+          return acc;
+        } else if (kandidat.v < 30) {
+          acc[1] = acc[1] + 1;
+          return acc;
+        } else if (kandidat.v < 40) {
+          acc[2] = acc[2] + 1;
+          return acc;
+        } else if (kandidat.v < 50) {
+          acc[3] = acc[3] + 1;
+          return acc;
+        } else if (kandidat.v < 60) {
+          acc[4] = acc[4] + 1;
+          return acc;
+        } else if (kandidat.v < 70) {
+          acc[5] = acc[5] + 1;
+          return acc;
+        } else if (kandidat.v < 80) {
+          acc[6] = acc[6] + 1;
+          return acc;
+        } else {
+          acc[7] = acc[7] + 1;
+          return acc;
+        }
+      },
+      [0, 0, 0, 0, 0, 0, 0, 0]
+    );
+    const celkVek = vybraniKandidati.reduce((acc, kandidat) => {
+        return acc + kandidat.v;
+    }, 0);
+    grafVek.series[0].data = ageGroups;
+    grafVek.title.text = `Věk – průměrně ${Math.round(celkVek/zobrazujiKandidatu)} let`;
+    Highcharts.chart(`graf-vek-${cisloGrafu}`, grafVek);
+  } else {
+    document.getElementById(`graf-vek-${cisloGrafu}`).classList.add("dn");
+  }
+}
+
 function update(msg, model) {
   switch (msg.type) {
     case MSGS.SEARCH_TERM: {
@@ -84,6 +132,7 @@ function update(msg, model) {
       const zobrazujiKandidatu = kandidati.reduce(sumVisible, 0);
       // překresli grafy
       prekresliGrafZen(kandidati, zobrazujiKandidatu, "1");
+      prekresliGrafVeku(kandidati, zobrazujiKandidatu, "1");
       return {
         ...model,
         searchTerm,
@@ -108,6 +157,7 @@ function update(msg, model) {
       const zobrazujiKandidatu = kandidati.reduce(sumVisible, 0);
       // a překresli grafy
       prekresliGrafZen(kandidati, zobrazujiKandidatu, "1");
+      prekresliGrafVeku(kandidati, zobrazujiKandidatu, "1");
       return {
         ...model,
         kandidati,
@@ -131,6 +181,7 @@ function update(msg, model) {
       const zobrazujiKandidatu = kandidati.reduce(sumVisible, 0);
       // a překresli grafy
       prekresliGrafZen(kandidati, zobrazujiKandidatu, "1");
+      prekresliGrafVeku(kandidati, zobrazujiKandidatu, "1");
       return {
         ...model,
         kandidati,
@@ -151,20 +202,38 @@ function update(msg, model) {
       const { id } = msg;
       // podívej se do LS a načti z ní uložené kandidáty
       const ulozeniKandidati = JSON.parse(localStorage.kandidatiSrdicka);
-      // zjisti index vybraného kandidáta  
+      // zjisti index vybraného kandidáta
       const index = ulozeniKandidati.indexOf(id);
       // pokud vybraný kandidát v LS není, přidej ho
       if (index < 0) {
-        const noviUlozeniKandidati = [...ulozeniKandidati, Number(id),];
+        const noviUlozeniKandidati = [...ulozeniKandidati, Number(id)];
         localStorage.kandidatiSrdicka = JSON.stringify(noviUlozeniKandidati);
         // překresli grafy
-        prekresliGrafZen(noviUlozeniKandidati.map((id) => model.kandidati[id]), noviUlozeniKandidati.length, "2");
-      // pokud vybraný kandidát v LS je, odeber ho  
+        prekresliGrafZen(
+          noviUlozeniKandidati.map((id) => model.kandidati[id]),
+          noviUlozeniKandidati.length,
+          "2"
+        );
+        prekresliGrafVeku(
+          noviUlozeniKandidati.map((id) => model.kandidati[id]),
+          noviUlozeniKandidati.length,
+          "2"
+        );
+        // pokud vybraný kandidát v LS je, odeber ho
       } else {
         ulozeniKandidati.splice(index, 1);
         localStorage.kandidatiSrdicka = JSON.stringify(ulozeniKandidati);
         //překresli grafy
-        prekresliGrafZen(ulozeniKandidati.map((id) => model.kandidati[id]), ulozeniKandidati.length, "2");
+        prekresliGrafZen(
+          ulozeniKandidati.map((id) => model.kandidati[id]),
+          ulozeniKandidati.length,
+          "2"
+        );
+        prekresliGrafVeku(
+          ulozeniKandidati.map((id) => model.kandidati[id]),
+          ulozeniKandidati.length,
+          "2"
+        );
       }
     }
   }
