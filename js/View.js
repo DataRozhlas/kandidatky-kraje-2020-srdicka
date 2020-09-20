@@ -384,24 +384,20 @@ function grafyVybranychInit(model, ls) {
 
 function vlozGrafZen(model, jenVybrani) {
   const id = `graf-zeny-${jenVybrani ? "2" : "1"}`;
-  return div({ className: "w-30 h5", id: id }, []);
+  return div({ className: "w-30 h5 ma0", id: id });
 }
 
 function vlozGrafVeku(model, jenVybrani) {
   return div(
-    { className: "w-30 h5", id: `graf-vek-${jenVybrani ? "2" : "1"}` },
-    []
-  );
+    { className: "w-30 h5 ma0", id: `graf-vek-${jenVybrani ? "2" : "1"}` });
 }
 
 function vlozGrafStran(model, jenVybrani) {
   return div(
     {
-      className: "w-30 h5",
+      className: "w-30 h5 ma0",
       id: `graf-strany-${jenVybrani ? "2" : "1"}`,
-    },
-    []
-  );
+    });
 }
 
 function vlozGrafy(model, jenVybrani) {
