@@ -160,7 +160,7 @@ function kandidatRow(dispatch, className, model) {
     return tr({ className }, [
       cell(
         td,
-        "pa1",
+        "pa1 f5",
         kresliSrdicko(dispatch, model, kandidat, jeVybrany(model, kandidat))
       ),
       cell(td, "pa1", `${kandidat.j} ${kandidat.p}`),
