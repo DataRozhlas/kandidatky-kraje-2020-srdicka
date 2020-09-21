@@ -3,7 +3,7 @@ const grafStrany = {
     type: "bar",
   },
   title: {
-    text: "Nejvíc kandidátů",
+    text: "Strany s nejvíce kandidáty",
     style: {
       fontFamily: "Asap",
       fontWeight: "bold",
@@ -58,7 +58,7 @@ const grafStrany = {
       groupPadding: 0,
       shadow: false,
       enableMouseTracking: false,
-      pointWidth: 14,
+      // pointWidth: 14,
     },
   },
   credits: {

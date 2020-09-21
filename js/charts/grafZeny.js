@@ -14,10 +14,12 @@ const grafZeny = {
     pie: {
       animation: false,
       enableMouseTracking: false,
+      borderWidth: 0,
+
       dataLabels: {
         enabled: true,
         format: "{point.name}<br>{point.percentage:.0f} %",
-        distance: "-40",
+        distance: "-30",
         color: "#fff",
         style: {
           textOutline: false,
