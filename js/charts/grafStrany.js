@@ -4,6 +4,11 @@ const grafStrany = {
   },
   title: {
     text: "Nejvíc kandidátů",
+    style: {
+      fontFamily: "Asap",
+      fontWeight: "bold",
+      fontSize: "1rem"
+    }
   },
   xAxis: {
     categories: [
@@ -16,17 +21,38 @@ const grafStrany = {
       "Rozumní",
       "ODS",
     ],
+    labels: {
+      style: {
+        fontFamily: "Asap",
+        fontSize: "0.85rem"
+      }
+    },
   },
   yAxis: {
     min: 0,
     title: {
       text: "počet kandidátů",
+      style: {
+        fontFamily: "Asap",
+        fontSize: "0.85rem"
+      }
     },
+    labels: {
+      style: {
+        fontFamily: "Asap",
+        fontSize: "0.85rem"
+      }
+    },
+    allowDecimals: false
   },
   plotOptions: {
     bar: {
       dataLabels: {
         enabled: true,
+        style: {
+          fontFamily: "Asap",
+          fontSize: "0.85rem"
+        }
       },
       animation: false,
       groupPadding: 0,

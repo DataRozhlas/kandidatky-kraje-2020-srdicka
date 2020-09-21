@@ -4,6 +4,11 @@ const grafVek = {
   },
   title: {
     text: "Věk – průměrně 48 let",
+    style: {
+      fontFamily: "Asap",
+      fontWeight: "bold",
+      fontSize: "1rem"
+    }
   },
   xAxis: {
     categories: [
@@ -16,12 +21,25 @@ const grafVek = {
       "70-79",
       "80 a víc",
     ],
+    labels: {
+      style: {
+        fontFamily: "Asap",
+        fontSize: "0.85rem"
+      }
+    },
   },
   yAxis: {
     min: 0,
     title: {
       text: "",
     },
+    labels: {
+      style: {
+        fontFamily: "Asap",
+        fontSize: "0.85rem"
+      }
+    },
+    allowDecimals: false
   },
   plotOptions: {
     column: {
@@ -39,7 +57,7 @@ const grafVek = {
   series: [
     {
       name: "věk",
-      color: "#5799CF",
+      color: "#6464A8",
       showInLegend: false,
       data: [51, 772, 1612, 2799, 2525, 1512, 421, 34],
     },

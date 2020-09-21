@@ -4,6 +4,11 @@ const grafZeny = {
   },
   title: {
     text: "Zastoupení žen",
+    style: {
+      fontFamily: "Asap",
+      fontWeight: "bold",
+      fontSize: "1rem"
+    }
   },
   plotOptions: {
     pie: {
@@ -11,9 +16,15 @@ const grafZeny = {
       enableMouseTracking: false,
       dataLabels: {
         enabled: true,
-        format: "<b>{point.name}</b> {point.percentage:.0f} %",
+        format: "{point.name}<br>{point.percentage:.0f} %",
         distance: "-40",
-        color: "#ffffff",
+        color: "#fff",
+        style: {
+          textOutline: false,
+          fontFamily: "Asap",
+          fontSize: ".9rem",
+          fontWeight: "normal"  
+        }
        // alignTo: "connectors",
        // connectorShape: "crookedLine",
       },
@@ -29,7 +40,7 @@ const grafZeny = {
         {
           name: "muži",
           y: 73.1,
-          color: "#19B8D1",
+          color: "#337CD7",
         },
         {
           name: "ženy",
