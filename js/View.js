@@ -38,7 +38,7 @@ const {
 function makeNavButton(text, dispatch) {
   return a(
     {
-      className: `dib dim link black f4 b pa1 pointer sans-serif`,
+      className: `dib dim link black f5 f4-ns b pa1 pointer sans-serif`,
       href: `#`,
       onclick: (e) => {
         e.preventDefault();
@@ -55,7 +55,7 @@ function makePagination(dispatch, model) {
       ? makeNavButton("← Předchozí", dispatch)
       : span(
           { className: `dib f4 b pa1 sans-serif`, style: "visibility:hidden" },
-          "← Předchozí"
+          "←Předchozí"
         ),
     model.isMobile
       ? div(
@@ -72,7 +72,7 @@ function makePagination(dispatch, model) {
         ),
     model.currPage <
     Math.floor(model.zobrazujiKandidatu / (model.isMobile ? 5 : 10))
-      ? makeNavButton("Další →", dispatch)
+      ? makeNavButton("Další→", dispatch)
       : span(
           { className: `dib f4 b pa1 sans-serif`, style: "visibility:hidden" },
           "Další →"
@@ -192,7 +192,7 @@ function tableView(dispatch, model, kandidati, vybrani) {
       "Zatím jste nikoho nevybrali. Zkuste někomu dát srdíčko!"
     );
   }
-  return table({ className: "mv2 w-100 collapse f6-ns f7", style: `${model.isMobile ? "margin-left: -15px;" : null}`, id: "tab1" }, [
+  return table({ className: "mv2 w-100-ns collapse f6-ns f7", style: `${model.isMobile ? "margin-left: -15px; width:100vw" : null}`, id: "tab1" }, [
     tableHeader(model),
     kandidatiBody(dispatch, "", kandidati, model),
   ]);
@@ -261,7 +261,7 @@ function formView(dispatch, model) {
   return div(
     {
       className:
-        "mw-100 center flex flex-wrap justify-between sans-serif f6 f5-ns",
+        "mw-100 center flex flex-wrap justify-between sans-serif f5 f5-ns",
     },
     [
       selectBox(model, "Všechny kraje", (e) =>
