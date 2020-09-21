@@ -10,10 +10,10 @@ import {
   vyberKraj,
   zmenStranku,
   srdicko,
+  zrusit,
 } from "./Update";
 
 const {
-  pre,
   div,
   h2,
   select,
@@ -147,7 +147,7 @@ function tableHeader(model) {
       cell(th, "pa1", "Věk"),
       cell(th, "pa1", "Povolání"),
       cell(th, "pa1", "Bydliště"),
-      model.isMobile ? null: cell(th, "pa1", "Kraj"),
+      model.isMobile ? null : cell(th, "pa1", "Kraj"),
       cell(th, "pa1", "Strana"),
       model.isMobile ? null : cell(th, "pa1", "Pořadí"),
     ]),
@@ -192,10 +192,14 @@ function tableView(dispatch, model, kandidati, vybrani) {
       "Zatím jste nikoho nevybrali. Zkuste někomu dát srdíčko!"
     );
   }
-  return table({ className: "mv2 w-100-ns collapse f6-ns f7", style: `${model.isMobile ? "margin-left: -15px; width:100vw" : null}`, id: "tab1" }, [
-    tableHeader(model),
-    kandidatiBody(dispatch, "", kandidati, model),
-  ]);
+  return table(
+    {
+      className: "mv2 w-100-ns collapse f6-ns f7",
+      style: `${model.isMobile ? "margin-left: -15px; width:100vw" : null}`,
+      id: "tab1",
+    },
+    [tableHeader(model), kandidatiBody(dispatch, "", kandidati, model)]
+  );
 }
 
 // menu
@@ -224,34 +228,40 @@ function generateOption(moznost, model) {
 function selectBox(model, allText, onchange) {
   switch (allText) {
     case "Všechny kraje": {
-      return select({ className: "w-100 w-30-ns pa1", id: "krajSelectBox", onchange }, [
-        option({ className: "", value: 0 }, allText),
-        model.kraje
-          .filter((k) => {
-            if (model.vybranaStrana === 0) return true;
-            // u každého kraje ověřit, jestli v něm vybranaStrana kandiduje
-            const zkoumanaStrana = model.strany.filter(
-              (s) => s.k === model.vybranaStrana
-            );
-            const kodUcasti = zkoumanaStrana[0].r.charAt(k.KRZAST - 1);
-            if (kodUcasti === "0") return true;
-            else return false;
-          })
-          .map((moznost) => generateOption(moznost, model)),
-      ]);
+      return select(
+        { className: "w-100 w-30-ns pa1", id: "krajSelectBox", onchange },
+        [
+          option({ className: "", value: 0 }, allText),
+          model.kraje
+            .filter((k) => {
+              if (model.vybranaStrana === 0) return true;
+              // u každého kraje ověřit, jestli v něm vybranaStrana kandiduje
+              const zkoumanaStrana = model.strany.filter(
+                (s) => s.k === model.vybranaStrana
+              );
+              const kodUcasti = zkoumanaStrana[0].r.charAt(k.KRZAST - 1);
+              if (kodUcasti === "0") return true;
+              else return false;
+            })
+            .map((moznost) => generateOption(moznost, model)),
+        ]
+      );
     }
     case "Všechny strany": {
-      return select({ className: "w-100 w-30-ns pa1", id: "stranaSelectBox", onchange }, [
-        option({ className: "", value: 0 }, allText),
-        model.strany
-          .filter((s) => {
-            if (model.vybranyKraj === 0) return true;
-            const kodUcasti = s.r.charAt(model.vybranyKraj - 1);
-            if (kodUcasti === "0") return true;
-            else return false;
-          })
-          .map((moznost) => generateOption(moznost, model)),
-      ]);
+      return select(
+        { className: "w-100 w-30-ns pa1", id: "stranaSelectBox", onchange },
+        [
+          option({ className: "", value: 0 }, allText),
+          model.strany
+            .filter((s) => {
+              if (model.vybranyKraj === 0) return true;
+              const kodUcasti = s.r.charAt(model.vybranyKraj - 1);
+              if (kodUcasti === "0") return true;
+              else return false;
+            })
+            .map((moznost) => generateOption(moznost, model)),
+        ]
+      );
     }
   }
 }
@@ -391,16 +401,17 @@ function vlozGrafZen(model, jenVybrani) {
 }
 
 function vlozGrafVeku(model, jenVybrani) {
-  return div(
-    { className: "w-30 h5 ma0", id: `graf-vek-${jenVybrani ? "2" : "1"}` });
+  return div({
+    className: "w-30 h5 ma0",
+    id: `graf-vek-${jenVybrani ? "2" : "1"}`,
+  });
 }
 
 function vlozGrafStran(model, jenVybrani) {
-  return div(
-    {
-      className: "w-30 h5 ma0",
-      id: `graf-strany-${jenVybrani ? "2" : "1"}`,
-    });
+  return div({
+    className: "w-30 h5 ma0",
+    id: `graf-strany-${jenVybrani ? "2" : "1"}`,
+  });
 }
 
 function vlozGrafy(model, jenVybrani) {
@@ -409,6 +420,31 @@ function vlozGrafy(model, jenVybrani) {
     vlozGrafVeku(model, jenVybrani),
     vlozGrafStran(model, jenVybrani),
   ]);
+}
+
+function pocitadlo(dispatch) {
+  const stavLS = JSON.parse(localStorage.kandidatiSrdicka);
+  if (stavLS.length > 0) {
+    return div({ className: "dib pa2 w-100 sans-serif f7-m f6 tc" }, [
+      `${sklonujKandidata(stavLS.length)} | `,
+      zrusitVyber(dispatch, "zrušit výběr"),
+    ]);
+  } else {
+    return;
+  }
+}
+
+function zrusitVyber(dispatch, text) {
+  return a(
+    {
+      href: "#",
+      onclick: (e) => {
+        e.preventDefault();
+        dispatch(zrusit(e.target.text));
+      },
+    },
+    text
+  );
 }
 
 function view(dispatch, model) {
@@ -424,10 +460,9 @@ function view(dispatch, model) {
     vlozGrafy(model, false),
     h2({ className: "f3 pv1 bb" }, "Vámi vybraná kandidátka"),
     tableView(dispatch, model, pripravVybrane(model), true),
-    div(
-      { className: "dib pa2 w-100 sans-serif f7-m f6 tc" },
-      sklonujKandidata(JSON.parse(localStorage.kandidatiSrdicka).length)
-    ),
+    div({ className: "dib pa2 w-100 sans-serif f7-m f6 tc" }, [
+      `${sklonujKandidata(localStorage.kandidatiSrdicka.length)}`]),
+    // pocitadlo(dispatch),
     vlozGrafy(model, true),
     document.addEventListener("DOMContentLoaded", function (event) {
       Highcharts.setOptions({

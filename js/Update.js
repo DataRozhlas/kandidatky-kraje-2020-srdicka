@@ -9,7 +9,15 @@ const MSGS = {
   VYBRANA_STRANA: "VYBRANA_STRANA",
   CURR_PAGE: "CURR_PAGE",
   SRDICKO: "SRDICKO",
+  ZRUSIT_VYBER: "ZRUSIT_VYBER",
 };
+
+export function zrusit(id) {
+  return {
+    type: MSGS.ZRUSIT_VYBER,
+    id,
+  };
+}
 
 export function srdicko(id) {
   return {
@@ -118,7 +126,8 @@ function prekresliGrafVeku(kandidati, zobrazujiKandidatu, cisloGrafu) {
 }
 
 function prekresliGrafStran(strany, kandidati, zobrazujiKandidatu, cisloGrafu) {
-  if (zobrazujiKandidatu > 0) {
+  console.log(zobrazujiKandidatu);
+    if (zobrazujiKandidatu > 0) {
     document.getElementById(`graf-strany-${cisloGrafu}`).classList.remove("dn");
     const vybraniKandidati = kandidati.filter((k) =>
       cisloGrafu === "1" ? k.s === 1 && k.f === 1 && k.q === 1 : true
@@ -190,7 +199,7 @@ function update(msg, model) {
       // a překresli grafy
       prekresliGrafZen(kandidati, zobrazujiKandidatu, "1");
       prekresliGrafVeku(kandidati, zobrazujiKandidatu, "1");
-      prekresliGrafStran(model.strany, kandidati, zobrazujiKandidatu, "1");
+      vybranyKraj === 0 ? prekresliGrafStran(model.strany, kandidati, zobrazujiKandidatu, "1") : document.getElementById(`graf-strany-1`).classList.add("dn");
 
       return {
         ...model,
@@ -216,7 +225,7 @@ function update(msg, model) {
       // a překresli grafy
       prekresliGrafZen(kandidati, zobrazujiKandidatu, "1");
       prekresliGrafVeku(kandidati, zobrazujiKandidatu, "1");
-      prekresliGrafStran(model.strany, kandidati, zobrazujiKandidatu, "1");
+      vybranaStrana ===0 ? prekresliGrafStran(model.strany, kandidati, zobrazujiKandidatu, "1") : document.getElementById(`graf-strany-1`).classList.add("dn");
 
       return {
         ...model,
@@ -233,6 +242,13 @@ function update(msg, model) {
       if (currPage === "←Předchozí") newCurrPage = model.currPage--;
       if (currPage === "Další→") newCurrPage = model.currPage++;
       return { ...model, newCurrPage };
+    }
+    case MSGS.ZRUSIT_VYBER: {
+      localStorage.setItem("kandidatiSrdicka", JSON.stringify([]));
+      document.getElementById(`graf-zeny-2`).classList.add("dn");
+      document.getElementById(`graf-vek-2`).classList.add("dn");
+      document.getElementById(`graf-strany-2`).classList.add("dn");
+      return model;
     }
     case MSGS.SRDICKO: {
       const { id } = msg;
