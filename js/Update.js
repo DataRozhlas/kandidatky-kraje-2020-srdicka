@@ -54,8 +54,8 @@ function sumVisible(acc, kandidat) {
 function prekresliGrafZen(kandidati, zobrazujiKandidatu, cisloGrafu) {
   if (zobrazujiKandidatu > 0) {
     document.getElementById(`graf-zeny-${cisloGrafu}`).classList.remove("dn");
-    const vybraniKandidati = kandidati.filter(
-      (k) => k.s === 1 && k.f === 1 && k.q === 1
+    const vybraniKandidati = kandidati.filter((k) =>
+      cisloGrafu === "1" ? k.s === 1 && k.f === 1 && k.q === 1 : true
     );
     const pocetZen = vybraniKandidati.reduce((acc, kandidat) => {
       return acc + (kandidat.p.slice(-1) === "á" ? 1 : 0);
@@ -71,8 +71,8 @@ function prekresliGrafZen(kandidati, zobrazujiKandidatu, cisloGrafu) {
 function prekresliGrafVeku(kandidati, zobrazujiKandidatu, cisloGrafu) {
   if (zobrazujiKandidatu > 0) {
     document.getElementById(`graf-vek-${cisloGrafu}`).classList.remove("dn");
-    const vybraniKandidati = kandidati.filter(
-      (k) => k.s === 1 && k.f === 1 && k.q === 1
+    const vybraniKandidati = kandidati.filter((k) =>
+      cisloGrafu === "1" ? k.s === 1 && k.f === 1 && k.q === 1 : true
     );
     const ageGroups = vybraniKandidati.reduce(
       (acc, kandidat) => {
@@ -120,24 +120,24 @@ function prekresliGrafVeku(kandidati, zobrazujiKandidatu, cisloGrafu) {
 function prekresliGrafStran(strany, kandidati, zobrazujiKandidatu, cisloGrafu) {
   if (zobrazujiKandidatu > 0) {
     document.getElementById(`graf-strany-${cisloGrafu}`).classList.remove("dn");
-    const vybraniKandidati = kandidati.filter(
-      (k) => k.s === 1 && k.f === 1 && k.q === 1
+    const vybraniKandidati = kandidati.filter((k) =>
+      cisloGrafu === "1" ? k.s === 1 && k.f === 1 && k.q === 1 : true
     );
-    const stranyPocty = strany.map(s => {
-       const kandidatiZaStranu = vybraniKandidati.reduce((acc, kandidat) => {
-           if (kandidat.k === s.k) {
-                acc = acc + 1;
-               return acc;
-           } else {
-               return acc;
-           }
-       },0);
-       return {s: s.nk, k: kandidatiZaStranu}
+    const stranyPocty = strany.map((s) => {
+      const kandidatiZaStranu = vybraniKandidati.reduce((acc, kandidat) => {
+        if (kandidat.k === s.k) {
+          acc = acc + 1;
+          return acc;
+        } else {
+          return acc;
+        }
+      }, 0);
+      return { s: s.nk, k: kandidatiZaStranu };
     });
     stranyPocty.sort((a, b) => parseFloat(b.k) - parseFloat(a.k));
-    const vysledek = stranyPocty.slice(0,8).filter(s => s.k > 0);
-    grafStrany.series[0].data = vysledek.map(v => v.k);
-    grafStrany.xAxis.categories = vysledek.map(v => v.s);
+    const vysledek = stranyPocty.slice(0, 8).filter((s) => s.k > 0);
+    grafStrany.series[0].data = vysledek.map((v) => v.k);
+    grafStrany.xAxis.categories = vysledek.map((v) => v.s);
     Highcharts.chart(`graf-strany-${cisloGrafu}`, grafStrany);
   } else {
     document.getElementById(`graf-strany-${cisloGrafu}`).classList.add("dn");
@@ -238,7 +238,7 @@ function update(msg, model) {
       const { id } = msg;
       // podívej se do LS a načti z ní uložené kandidáty
       const ulozeniKandidati = JSON.parse(localStorage.kandidatiSrdicka);
-      // zjisti index vybraného kandidáta
+      // zjisti index osrdíčkovaného kandidáta
       const index = ulozeniKandidati.indexOf(id);
       // pokud vybraný kandidát v LS není, přidej ho
       if (index < 0) {
