@@ -230,8 +230,8 @@ function update(msg, model) {
     case MSGS.CURR_PAGE: {
       const { currPage } = msg;
       let newCurrPage = model.currPage;
-      if (currPage === "← Předchozí") newCurrPage = model.currPage--;
-      if (currPage === "Další →") newCurrPage = model.currPage++;
+      if (currPage === "←Předchozí") newCurrPage = model.currPage--;
+      if (currPage === "Další→") newCurrPage = model.currPage++;
       return { ...model, newCurrPage };
     }
     case MSGS.SRDICKO: {

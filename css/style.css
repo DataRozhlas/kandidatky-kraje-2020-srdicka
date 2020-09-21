@@ -883,7 +883,7 @@ img {
   float: none;
 }
 .sans-serif {
-  font-family: -apple-system, BlinkMacSystemFont, avenir next, avenir,
+  font-family: Asap, -apple-system, BlinkMacSystemFont, avenir next, avenir,
     helvetica neue, helvetica, ubuntu, roboto, noto, segoe ui, arial, sans-serif;
 }
 .serif {
@@ -2553,7 +2553,7 @@ code {
   background-color: hsla(0, 0%, 100%, 0.1);
 }
 .stripe-dark:nth-child(odd) {
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: rgba(0, 0, 0, 0.07);
 }
 .strike {
   text-decoration: line-through;

@@ -52,7 +52,7 @@ function makeNavButton(text, dispatch) {
 function makePagination(dispatch, model) {
   return nav({ className: "mw100 pv1 flex flex-nowrap justify-between" }, [
     model.currPage > 0
-      ? makeNavButton("← Předchozí", dispatch)
+      ? makeNavButton("←Předchozí", dispatch)
       : span(
           { className: `dib f4 b pa1 sans-serif`, style: "visibility:hidden" },
           "←Předchozí"
@@ -75,7 +75,7 @@ function makePagination(dispatch, model) {
       ? makeNavButton("Další→", dispatch)
       : span(
           { className: `dib f4 b pa1 sans-serif`, style: "visibility:hidden" },
-          "Další →"
+          "Další→"
         ),
   ]);
 }
@@ -404,7 +404,7 @@ function vlozGrafStran(model, jenVybrani) {
 }
 
 function vlozGrafy(model, jenVybrani) {
-  return div({ className: "w-100 pa1 flex flex-wrap justify-between" }, [
+  return div({ className: "w-100 pa1 pt4 flex flex-wrap justify-between" }, [
     vlozGrafZen(model, jenVybrani),
     vlozGrafVeku(model, jenVybrani),
     vlozGrafStran(model, jenVybrani),
@@ -412,17 +412,17 @@ function vlozGrafy(model, jenVybrani) {
 }
 
 function view(dispatch, model) {
-  return div({ className: "mw-100 center" }, [
+  return div({ className: "mw-100 center pb5" }, [
     localStorage.getItem("kandidatiSrdicka")
       ? null
       : localStorage.setItem("kandidatiSrdicka", JSON.stringify([])),
     isMobile(model),
-    h2({ className: "sans-serif f3 pv1 bb" }, "Skutečné kandidátky"),
+    h2({ className: "f3 pv1 bb" }, "Skutečné kandidátky"),
     formView(dispatch, model),
     tableView(dispatch, model, naporcujKandidaty(model), false),
     makePagination(dispatch, model),
     vlozGrafy(model, false),
-    h2({ className: "sans-serif f3 pv1 bb" }, "Vámi vybraná kandidátka"),
+    h2({ className: "f3 pv1 bb" }, "Vámi vybraná kandidátka"),
     tableView(dispatch, model, pripravVybrane(model), true),
     div(
       { className: "dib pa2 w-100 sans-serif f7-m f6 tc" },
