@@ -58,7 +58,7 @@ const grafStrany = {
       groupPadding: 0,
       shadow: false,
       enableMouseTracking: false,
-      // pointWidth: 14,
+      pointWidth: 14,
     },
   },
   credits: {

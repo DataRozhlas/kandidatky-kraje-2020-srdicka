@@ -287,7 +287,7 @@ function formView(dispatch, model) {
         [
           label({ className: "w20" }, "Hledej "),
           input({
-            className: "input-reset ba w-80",
+            className: "input-reset ba w-80 pa1",
             type: "text",
             placeholder: "jméno, povolání, bydliště",
             oninput: (e) => {
@@ -397,19 +397,19 @@ function grafyVybranychInit(model, ls) {
 
 function vlozGrafZen(model, jenVybrani) {
   const id = `graf-zeny-${jenVybrani ? "2" : "1"}`;
-  return div({ className: "w-30 h5 ma0", id: id });
+  return div({ className: "w-100 w-50-m w-30-l h5 ma0", id: id });
 }
 
 function vlozGrafVeku(model, jenVybrani) {
   return div({
-    className: "w-30 h5 ma0",
+    className: "w-100 w-50-m w-30-l h5 ma0",
     id: `graf-vek-${jenVybrani ? "2" : "1"}`,
   });
 }
 
 function vlozGrafStran(model, jenVybrani) {
   return div({
-    className: "w-30 h5 ma0",
+    className: "w-100 w-50-m w-30-l h5 ma0",
     id: `graf-strany-${jenVybrani ? "2" : "1"}`,
   });
 }
@@ -461,7 +461,7 @@ function view(dispatch, model) {
     h2({ className: "f3 pv1 bb" }, "Vámi vybraná kandidátka"),
     tableView(dispatch, model, pripravVybrane(model), true),
     div({ className: "dib pa2 w-100 sans-serif f7-m f6 tc" }, [
-      `${sklonujKandidata(localStorage.kandidatiSrdicka.length)}`]),
+      `${sklonujKandidata(JSON.parse(localStorage.kandidatiSrdicka).length)}`]),
     // pocitadlo(dispatch),
     vlozGrafy(model, true),
     document.addEventListener("DOMContentLoaded", function (event) {

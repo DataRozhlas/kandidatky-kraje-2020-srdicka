@@ -199,7 +199,7 @@ function update(msg, model) {
       // a překresli grafy
       prekresliGrafZen(kandidati, zobrazujiKandidatu, "1");
       prekresliGrafVeku(kandidati, zobrazujiKandidatu, "1");
-      vybranyKraj === 0 ? prekresliGrafStran(model.strany, kandidati, zobrazujiKandidatu, "1") : document.getElementById(`graf-strany-1`).classList.add("dn");
+      prekresliGrafStran(model.strany, kandidati, zobrazujiKandidatu, "1");
 
       return {
         ...model,
@@ -225,7 +225,7 @@ function update(msg, model) {
       // a překresli grafy
       prekresliGrafZen(kandidati, zobrazujiKandidatu, "1");
       prekresliGrafVeku(kandidati, zobrazujiKandidatu, "1");
-      vybranaStrana ===0 ? prekresliGrafStran(model.strany, kandidati, zobrazujiKandidatu, "1") : document.getElementById(`graf-strany-1`).classList.add("dn");
+      prekresliGrafStran(model.strany, kandidati, zobrazujiKandidatu, "1");
 
       return {
         ...model,
