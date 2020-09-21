@@ -139,18 +139,21 @@ function cell(tag, className, value) {
   return tag({ className }, value);
 }
 
-const tableHeader = thead([
-  tr([
-    cell(th, "pa1", ""),
-    cell(th, "pa1", "Jméno"),
-    cell(th, "pa1", "Věk"),
-    cell(th, "pa1", "Povolání"),
-    cell(th, "pa1", "Bydliště"),
-    cell(th, "pa1", "Kraj"),
-    cell(th, "pa1", "Strana"),
-    cell(th, "pa1", "Pořadí"),
-  ]),
-]);
+function tableHeader(model) {
+  const tableHeader = thead([
+    tr([
+      cell(th, "pa1", ""),
+      cell(th, "pa1", "Jméno"),
+      cell(th, "pa1", "Věk"),
+      cell(th, "pa1", "Povolání"),
+      cell(th, "pa1", "Bydliště"),
+      model.isMobile ? null: cell(th, "pa1", "Kraj"),
+      cell(th, "pa1", "Strana"),
+      model.isMobile ? null : cell(th, "pa1", "Pořadí"),
+    ]),
+  ]);
+  return tableHeader;
+}
 
 function kandidatRow(dispatch, className, model) {
   return function (kandidat) {
@@ -164,9 +167,9 @@ function kandidatRow(dispatch, className, model) {
       cell(td, "pa1", kandidat.v),
       cell(td, "pa1", kandidat.po),
       cell(td, "pa1", kandidat.b),
-      cell(td, "pa1", zjistiKraj(model, kandidat.z)),
+      model.isMobile ? null : cell(td, "pa1", zjistiKraj(model, kandidat.z)),
       cell(td, "pa1", zjistiStranu(model, kandidat.k)),
-      cell(td, "pa1 tc", kandidat.c),
+      model.isMobile ? null : cell(td, "pa1 tc", kandidat.c),
     ]);
   };
 }
@@ -189,8 +192,8 @@ function tableView(dispatch, model, kandidati, vybrani) {
       "Zatím jste nikoho nevybrali. Zkuste někomu dát srdíčko!"
     );
   }
-  return table({ className: "mv2 w-100 collapse f6-ns f7", id: "tab1" }, [
-    tableHeader,
+  return table({ className: "mv2 w-100 collapse f6-ns f7", style: `${model.isMobile ? "margin-left: -15px;" : null}`, id: "tab1" }, [
+    tableHeader(model),
     kandidatiBody(dispatch, "", kandidati, model),
   ]);
 }
@@ -221,7 +224,7 @@ function generateOption(moznost, model) {
 function selectBox(model, allText, onchange) {
   switch (allText) {
     case "Všechny kraje": {
-      return select({ className: "w-3 pa1", id: "krajSelectBox", onchange }, [
+      return select({ className: "w-100 w-30-ns pa1", id: "krajSelectBox", onchange }, [
         option({ className: "", value: 0 }, allText),
         model.kraje
           .filter((k) => {
@@ -238,7 +241,7 @@ function selectBox(model, allText, onchange) {
       ]);
     }
     case "Všechny strany": {
-      return select({ className: "w-3 pa1", id: "stranaSelectBox", onchange }, [
+      return select({ className: "w-100 w-30-ns pa1", id: "stranaSelectBox", onchange }, [
         option({ className: "", value: 0 }, allText),
         model.strany
           .filter((s) => {
@@ -258,7 +261,7 @@ function formView(dispatch, model) {
   return div(
     {
       className:
-        "mw-100 center flex flex-wrap justify-between sans-serif f5-m f5-l f7",
+        "mw-100 center flex flex-wrap justify-between sans-serif f6 f5-ns",
     },
     [
       selectBox(model, "Všechny kraje", (e) =>
@@ -269,12 +272,12 @@ function formView(dispatch, model) {
       ),
       form(
         {
-          className: "w-3 pa1",
+          className: "w-100 w-30-ns pa1",
         },
         [
-          label({}, "Hledej "),
+          label({ className: "w20" }, "Hledej "),
           input({
-            className: "input-reset ba",
+            className: "input-reset ba w-80",
             type: "text",
             placeholder: "jméno, povolání, bydliště",
             oninput: (e) => {
