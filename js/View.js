@@ -92,31 +92,19 @@ function naporcujKandidaty(model) {
 function kresliSrdicko(dispatch, model, kandidat, jeVybrany) {
   if (!jeVybrany) {
     return i({
-      className: "ph1 far fa-heart pointer",
+      className: "ph1 far fa-heart pointer hover-red-l",
       title: "klikni a dáš srdíčko",
       onclick: () => {
         dispatch(srdicko(model.kandidati.indexOf(kandidat)));
-      },
-      onmouseover: (e) => {
-        e.target.style.color = "#ff4136";
-      },
-      onmouseout: (e) => {
-        e.target.style.color = "#000";
-      },
+      }
     });
   } else {
     return i({
-      className: "ph1 fas fa-heart pointer red",
+      className: "ph1 fas fa-heart pointer red hover-washed-red-l",
       title: "klikni a sebereš srdíčko",
       onclick: () => {
         dispatch(srdicko(model.kandidati.indexOf(kandidat)));
-      },
-      onmouseover: (e) => {
-        e.target.style.color = "#ffdfdf";
-      },
-      onmouseout: (e) => {
-        e.target.style.color = "#ff4136";
-      },
+      }
     });
   }
 }
@@ -172,7 +160,7 @@ function kandidatRow(dispatch, className, model) {
     return tr({ className }, [
       cell(
         td,
-        "pa1 f5 f4-ns",
+        "pa1 f5",
         kresliSrdicko(dispatch, model, kandidat, jeVybrany(model, kandidat))
       ),
       cell(td, "pa1", `${kandidat.j} ${kandidat.p}`),
