@@ -92,7 +92,7 @@ function naporcujKandidaty(model) {
 function kresliSrdicko(dispatch, model, kandidat, jeVybrany) {
   if (!jeVybrany) {
     return i({
-      className: "ph1 far fa-heart pointer hover-red-l",
+      className: "ph1 far fa-heart pointer",
       title: "klikni a dáš srdíčko",
       onclick: () => {
         dispatch(srdicko(model.kandidati.indexOf(kandidat)));
@@ -100,7 +100,7 @@ function kresliSrdicko(dispatch, model, kandidat, jeVybrany) {
     });
   } else {
     return i({
-      className: "ph1 fas fa-heart pointer red hover-washed-red-l",
+      className: "ph1 fas fa-heart pointer red",
       title: "klikni a sebereš srdíčko",
       onclick: () => {
         dispatch(srdicko(model.kandidati.indexOf(kandidat)));
@@ -397,19 +397,19 @@ function grafyVybranychInit(model, ls) {
 
 function vlozGrafZen(model, jenVybrani) {
   const id = `graf-zeny-${jenVybrani ? "2" : "1"}`;
-  return div({ className: "w-100 w-50-m w-30-l h5 ma0", id: id });
+  return div({ className: "w-100 w-50-m w-30-l h5 ma0 no-underline", id: id });
 }
 
 function vlozGrafVeku(model, jenVybrani) {
   return div({
-    className: "w-100 w-50-m w-30-l h5 ma0",
+    className: "w-100 w-50-m w-30-l h5 ma0 no-underline",
     id: `graf-vek-${jenVybrani ? "2" : "1"}`,
   });
 }
 
 function vlozGrafStran(model, jenVybrani) {
   return div({
-    className: "w-100 w-50-m w-30-l h5 ma0",
+    className: "w-100 w-50-m w-30-l h5 ma0 no-underline",
     id: `graf-strany-${jenVybrani ? "2" : "1"}`,
   });
 }
