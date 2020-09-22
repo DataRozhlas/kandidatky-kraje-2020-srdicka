@@ -96,6 +96,9 @@ function kresliSrdicko(dispatch, model, kandidat, jeVybrany) {
       title: "klikni a dáš srdíčko",
       onclick: () => {
         dispatch(srdicko(model.kandidati.indexOf(kandidat)));
+        Highcharts.chart("graf-zeny-2", grafZeny);
+        Highcharts.chart("graf-vek-2", grafVek);
+        Highcharts.chart("graf-strany-2", grafStrany);
       }
     });
   } else {
@@ -104,6 +107,13 @@ function kresliSrdicko(dispatch, model, kandidat, jeVybrany) {
       title: "klikni a sebereš srdíčko",
       onclick: () => {
         dispatch(srdicko(model.kandidati.indexOf(kandidat)));
+        Highcharts.chart("graf-zeny-2", grafZeny);
+        Highcharts.chart("graf-vek-2", grafVek);
+        Highcharts.chart("graf-strany-2", grafStrany);
+        if (JSON.parse(localStorage.kandidatiSrdicka).length == 0) {
+        document.getElementById("graf-zeny-2").classList.add("dn");
+        document.getElementById("graf-vek-2").classList.add("dn");
+        document.getElementById("graf-strany-2").classList.add("dn");}
       }
     });
   }
@@ -274,11 +284,19 @@ function formView(dispatch, model) {
         "mw-100 center flex flex-wrap justify-between sans-serif f5 f5-ns",
     },
     [
-      selectBox(model, "Všechny kraje", (e) =>
-        dispatch(vyberKraj(Number(e.target.value)))
+      selectBox(model, "Všechny kraje", (e) => {
+        dispatch(vyberKraj(Number(e.target.value)));
+        Highcharts.chart("graf-zeny-1", grafZeny);
+        Highcharts.chart("graf-vek-1", grafVek);
+        Highcharts.chart("graf-strany-1", grafStrany);      
+      },
       ),
-      selectBox(model, "Všechny strany", (e) =>
-        dispatch(vyberStranu(Number(e.target.value)))
+      selectBox(model, "Všechny strany", (e) => {
+        dispatch(vyberStranu(Number(e.target.value)));
+        Highcharts.chart("graf-zeny-1", grafZeny);
+        Highcharts.chart("graf-vek-1", grafVek);
+        Highcharts.chart("graf-strany-1", grafStrany);
+      }
       ),
       form(
         {
@@ -292,6 +310,9 @@ function formView(dispatch, model) {
             placeholder: "jméno, povolání, bydliště",
             oninput: (e) => {
               dispatch(searchTermInput(e.target.value));
+              Highcharts.chart("graf-zeny-1", grafZeny);
+              Highcharts.chart("graf-vek-1", grafVek);
+              Highcharts.chart("graf-strany-1", grafStrany);
             },
             value: searchTerm,
           }),
@@ -427,20 +448,25 @@ function pocitadlo(dispatch) {
   if (stavLS.length > 0) {
     return div({ className: "dib pa2 w-100 sans-serif f7-m f6 tc" }, [
       `${sklonujKandidata(stavLS.length)} | `,
-      zrusitVyber(dispatch, "zrušit výběr"),
+      zrusitVyber(dispatch, "zrušit výběr", stavLS),
     ]);
   } else {
     return;
   }
 }
 
-function zrusitVyber(dispatch, text) {
+function zrusitVyber(dispatch, text, stavLS) {
   return a(
     {
       href: "#",
       onclick: (e) => {
         e.preventDefault();
         dispatch(zrusit(e.target.text));
+        if (stavLS.length = 1) {
+           document.getElementById("graf-zeny-2").classList.add("dn");
+           document.getElementById("graf-vek-2").classList.add("dn");
+           document.getElementById("graf-strany-2").classList.add("dn");
+        }
       },
     },
     text
@@ -460,9 +486,9 @@ function view(dispatch, model) {
     vlozGrafy(model, false),
     h2({ className: "f3 pv1 bb" }, "Vámi vybraná kandidátka"),
     tableView(dispatch, model, pripravVybrane(model), true),
-    div({ className: "dib pa2 w-100 sans-serif f7-m f6 tc" }, [
-      `${sklonujKandidata(JSON.parse(localStorage.kandidatiSrdicka).length)}`]),
-    // pocitadlo(dispatch),
+    // div({ className: "dib pa2 w-100 sans-serif f7-m f6 tc" }, [
+    //   `${sklonujKandidata(JSON.parse(localStorage.kandidatiSrdicka).length)}`]),
+     pocitadlo(dispatch),
     vlozGrafy(model, true),
     document.addEventListener("DOMContentLoaded", function (event) {
       Highcharts.setOptions({

@@ -1,4 +1,4 @@
-import Highcharts from "highcharts";
+//import Highcharts from "highcharts";
 import grafZeny from "./charts/grafZeny";
 import grafVek from "./charts/grafVek";
 import grafStrany from "./charts/grafStrany";
@@ -70,7 +70,7 @@ function prekresliGrafZen(kandidati, zobrazujiKandidatu, cisloGrafu) {
     }, 0);
     grafZeny.series[0].data[1].y = (pocetZen / zobrazujiKandidatu) * 100;
     grafZeny.series[0].data[0].y = 100 - (pocetZen / zobrazujiKandidatu) * 100;
-    Highcharts.chart(`graf-zeny-${cisloGrafu}`, grafZeny);
+   // Highcharts.chart(`graf-zeny-${cisloGrafu}`, grafZeny);
   } else {
     document.getElementById(`graf-zeny-${cisloGrafu}`).classList.add("dn");
   }
@@ -119,14 +119,13 @@ function prekresliGrafVeku(kandidati, zobrazujiKandidatu, cisloGrafu) {
     grafVek.title.text = `Věk – průměrně ${Math.round(
       celkVek / zobrazujiKandidatu
     )} let`;
-    Highcharts.chart(`graf-vek-${cisloGrafu}`, grafVek);
+ //   Highcharts.chart(`graf-vek-${cisloGrafu}`, grafVek);
   } else {
     document.getElementById(`graf-vek-${cisloGrafu}`).classList.add("dn");
   }
 }
 
 function prekresliGrafStran(strany, kandidati, zobrazujiKandidatu, cisloGrafu) {
-  console.log(zobrazujiKandidatu);
     if (zobrazujiKandidatu > 0) {
     document.getElementById(`graf-strany-${cisloGrafu}`).classList.remove("dn");
     const vybraniKandidati = kandidati.filter((k) =>
@@ -147,7 +146,7 @@ function prekresliGrafStran(strany, kandidati, zobrazujiKandidatu, cisloGrafu) {
     const vysledek = stranyPocty.slice(0, 8).filter((s) => s.k > 0);
     grafStrany.series[0].data = vysledek.map((v) => v.k);
     grafStrany.xAxis.categories = vysledek.map((v) => v.s);
-    Highcharts.chart(`graf-strany-${cisloGrafu}`, grafStrany);
+  //  Highcharts.chart(`graf-strany-${cisloGrafu}`, grafStrany);
   } else {
     document.getElementById(`graf-strany-${cisloGrafu}`).classList.add("dn");
   }

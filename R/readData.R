@@ -23,7 +23,8 @@ kzrk %>%
 
 table(substr(kzrk$PRIJMENI, nchar(kzrk$PRIJMENI), nchar(kzrk$PRIJMENI)) == "á")
 
-                
+hist(kzrk$VEK, 10)
+max(kzrk$VEK)                
        
        
        
